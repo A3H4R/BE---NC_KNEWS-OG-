@@ -4,7 +4,7 @@ exports.up = function (connection, Promise) {
     articles_table.string('title').notNullable();
     articles_table.text('body').notNullable();
     articles_table
-      .integer('vote')
+      .integer('votes')
       .defaultTo(0)
       .notNullable();
     articles_table
