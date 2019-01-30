@@ -1,7 +1,6 @@
 exports.up = function (connection, Promise) {
   return connection.schema.createTable('topics', (topics_table) => {
     topics_table.string('slug').primary();
-    topics_table.unique('slug');
     topics_table.string('description').notNullable();
   });
 };

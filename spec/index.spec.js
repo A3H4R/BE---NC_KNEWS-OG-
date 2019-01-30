@@ -35,15 +35,56 @@ describe('./api', () => {
           expect(body.newTopic[0].slug).to.equal(newTopic.slug);
         });
     });
-    it('[[POST]] - [status 400] gives error when description & slug property is empty', () => {
-      const newTopic = { description: '', slug: '' };
+    it('[[POST]] - [status 400] gives error when description property is null (i.e - missing)', () => {
+      const newTopic = { slug: 'Ronaldo' };
       return request
         .post('/api/topics')
         .send(newTopic)
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).to.equal('Bad Request');
+          expect(body.message).to.equal('invalid input - violates not null violation');
         });
+    });
+    describe('/topics/:topic/articles', () => {
+      it('[[GET]] - [status 200] - responds with array of articles with specified topic', () => request
+        .get('/api/topics/mitch/articles')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).to.be.an('array');
+          expect(body.articles[0].topic).to.equal('mitch');
+        }));
+      it('[[GET]] - [status 404] - responds with error when topic does not exist', () => request
+        .get('/api/topics/france/articles')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).to.equal('topic does not exist');
+        }));
+      it('[[GET]] - [status 200] - defaults to giving back 10 article objects [-[DEFAULT CASE]-]', () => request
+        .get('/api/topics/mitch/articles')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).to.have.lengthOf('10');
+        }));
+      it('[[GET]] - [status 200] - takes a limit query and responds with correct number of article objects', () => request
+        .get('/api/topics/mitch/articles?limit=5')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).to.have.lengthOf('5');
+        }));
+      it('[[GET]] - [status 200] - defaults to ordering article objects by date [-[DEFAULT CASE]-]', () => request
+        .get('/api/topics/mitch/articles')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles[0].article_id).to.equal(12);
+          expect(body.articles[9].article_id).to.equal(2);
+        }));
+      it('[[GET]] - [status 200] - takes a sort_by query and responds with sorting article objects by specified column', () => request
+        .get('/api/topics/mitch/articles?sort_by=title')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles[0].article_id).to.equal(12);
+          expect(body.articles[9].article_id).to.equal(2);
+        }));
     });
   });
 });
