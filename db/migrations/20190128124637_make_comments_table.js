@@ -1,6 +1,6 @@
 exports.up = function (connection, Promise) {
   return connection.schema.createTable('comments', (comments_table) => {
-    comments_table.increments('comment_id').notNullable();
+    comments_table.increments('comment_id').primary().notNullable();
     comments_table
       .string('username')
       .references('users.username')
