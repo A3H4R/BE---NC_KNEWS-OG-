@@ -2,8 +2,9 @@
 select * from topics;
 
 
-select * from articles where topic = 'mitch';
+select * from articles where topic = 'mitch' ;
 
-select * from articles where topic = 'mitch' LIMIT 10 ORDER BY created_at;
+
+select * from articles where topic = 'mitch' ORDER BY article_id asc LIMIT 10 OFFSET 4;
 
 -- a total_count property, displaying the total number of articles for the given topic

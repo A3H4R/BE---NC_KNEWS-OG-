@@ -75,15 +75,35 @@ describe('./api', () => {
         .get('/api/topics/mitch/articles')
         .expect(200)
         .then(({ body }) => {
-          expect(body.articles[0].article_id).to.equal(12);
-          expect(body.articles[9].article_id).to.equal(2);
+          expect(body.articles[0].article_id).to.equal(1);
+          expect(body.articles[9].article_id).to.equal(11);
         }));
       it('[[GET]] - [status 200] - takes a sort_by query and responds with sorting article objects by specified column', () => request
         .get('/api/topics/mitch/articles?sort_by=title')
         .expect(200)
         .then(({ body }) => {
+          expect(body.articles[0].title).to.equal('Z');
+          expect(body.articles[9].title).to.equal('Am I a cat?');
+        }));
+      it('[[GET]] - [status 200] - responds with article objects skipping rows to the specified offset value', () => request
+        .get('/api/topics/mitch/articles?p=3')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).to.have.lengthOf('8');
+        }));
+      it('[[GET]] - [status 200] - defaults with article objects ordered in descending order [-[DEFAULT CASE]-]', () => request
+        .get('/api/topics/mitch/articles?sort_by=article_id&order')
+        .expect(200)
+        .then(({ body }) => {
           expect(body.articles[0].article_id).to.equal(12);
           expect(body.articles[9].article_id).to.equal(2);
+        }));
+      it('[[GET]] - [status 200] - takes order query responds with article objects ordered in ascending order', () => request
+        .get('/api/topics/mitch/articles?sort_by=article_id&order=asc')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles[0].article_id).to.equal(1);
+          expect(body.articles[9].article_id).to.equal(11);
         }));
     });
   });

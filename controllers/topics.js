@@ -17,11 +17,11 @@ exports.getArticlesByTopic = (req, res, next) => {
   const {
     limit,
     sort_by,
-    p,
     order,
+    p,
   } = req.query;
   const topic = req.params.topic;
-  fetchArticlesByTopic(topic, limit, sort_by, p, order)
+  fetchArticlesByTopic(topic, limit, sort_by, order, p)
     .then((articles) => {
       if (articles.length === 0) {
         next({ status: 404, message: 'topic does not exist' });
