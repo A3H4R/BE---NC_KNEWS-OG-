@@ -52,6 +52,7 @@ describe('./api', () => {
         .then(({ body }) => {
           expect(body.articles).to.be.an('array');
           expect(body.articles[0].topic).to.equal('mitch');
+          expect(body.articles[0]).to.contain.keys('author', 'comment_count');
         }));
       it('[[GET]] - [status 404] - responds with error when topic does not exist', () => request
         .get('/api/topics/france/articles')
@@ -92,7 +93,7 @@ describe('./api', () => {
           expect(body.articles).to.have.lengthOf('8');
         }));
       it('[[GET]] - [status 200] - defaults with article objects ordered in descending order [-[DEFAULT CASE]-]', () => request
-        .get('/api/topics/mitch/articles?sort_by=article_id&order')
+        .get('/api/topics/mitch/articles?sort_by=article_id')
         .expect(200)
         .then(({ body }) => {
           expect(body.articles[0].article_id).to.equal(12);
@@ -105,6 +106,37 @@ describe('./api', () => {
           expect(body.articles[0].article_id).to.equal(1);
           expect(body.articles[9].article_id).to.equal(11);
         }));
+      it('[[POST]] - [status 201] - body accepts an object with title, body, username properties & responds with the posted new article object', () => {
+        const newArticle = { title: 'What Do Cats Think About Us? ', body: 'We\'ve yet to discover anything about cat behavior that suggests they have a separate box they put us in when they\'re socializing with us.', username: 'butter_bridge' };
+        return request
+          .post('/api/topics/cats/articles')
+          .send(newArticle)
+          .expect(201)
+          .then(({ body }) => {
+            expect(body.newArticle[0].title).to.equal(newArticle.title);
+            expect(body.newArticle[0].username).to.equal(newArticle.username);
+          });
+      });
+      it('[[POST]] - [status 400] -  responds with error when posting new article with username that does not exist', () => {
+        const newArticle = { title: 'What Do Cats Say About Us? ', body: 'cat\'s don\'t speak, so we do not know.', username: 'cat_man738' };
+        return request
+          .post('/api/topics/cats/articles')
+          .send(newArticle)
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.message).to.equal('username does not exist');
+          });
+      });
+      it('[[POST]] - [status 400] gives error if body property is null (i.e - missing) when posting new article', () => {
+        const newArticle = { title: 'The Meaning of Life? ', username: 'butter_bridge' };
+        return request
+          .post('/api/topics/mitch/articles')
+          .send(newArticle)
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.message).to.equal('invalid input - violates not null violation');
+          });
+      });
     });
   });
 });

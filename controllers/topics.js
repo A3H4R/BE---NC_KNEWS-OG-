@@ -1,5 +1,7 @@
 const connection = require('../db/connection');
-const { fetchTopics, addTopic, fetchArticlesByTopic } = require('../db/models/topics');
+const {
+  fetchTopics, addTopic, fetchArticlesByTopic, addArticle,
+} = require('../db/models/topics');
 
 exports.getTopics = (req, res, next) => {
   fetchTopics()
@@ -29,5 +31,16 @@ exports.getArticlesByTopic = (req, res, next) => {
         res.status(200).send({ articles });
       }
     })
+    .catch(next);
+};
+
+exports.createArticleByTopic = (req, res, next) => {
+  const { topic } = req.params;
+  const { title, body, username } = req.body;
+
+  addArticle({
+    title, body, username, topic,
+  })
+    .then(newArticle => res.status(201).send({ newArticle }))
     .catch(next);
 };

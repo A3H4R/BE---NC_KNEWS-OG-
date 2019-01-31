@@ -1,17 +1,18 @@
 \c nc_knews_test
-select * from topics;
-select * from users;
-select * from articles;
-select * from comments;
+    select * from topics;
+    select * from users;
+    select * from articles;
+    select * from comments;
 
 -- SELECT comments.article_id, COUNT(comment_id) AS comment_count
 -- FROM comments 
 -- LEFT JOIN articles ON articles.article_id = comments.article_id
 -- GROUP BY comments.article_id;
 
-SELECT articles.article_id, articles.username AS author, topic, title, articles.body, articles.votes, articles.created_at, COUNT(comments.comment_id) AS comment_count FROM articles
-LEFT JOIN comments ON comments.article_id = articles.article_id
-GROUP BY articles.article_id;
+
+-- SELECT articles.article_id, articles.username AS author, topic, title, articles.body, articles.votes, articles.created_at, COUNT(comments.comment_id) AS comment_count FROM articles
+-- LEFT JOIN comments ON comments.article_id = articles.article_id
+-- GROUP BY articles.article_id;
 
         
 -- select * from articles where topic = 'mitch' ORDER BY article_id asc LIMIT 10;
