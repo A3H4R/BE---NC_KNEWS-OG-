@@ -29,6 +29,14 @@ exports.updateVote = (req, res, next) => {
   const { article_id } = req.params;
   console.log(article_id);
   changeVote(article_id, inc_vote)
-    .then(([article]) => res.status(200).send({ article }))
+    .then(([article]) => {
+      console.log(typeof inc_vote);
+      if (typeof inc_vote !== 'number') {
+        next({ status: 400, message: 'value for vote must must be a number' });
+      } else if (!inc_vote) next({ status: 400, message: 'input for updating vote is missing' });
+      else {
+        res.status(200).send({ article });
+      }
+    })
     .catch(next);
 };

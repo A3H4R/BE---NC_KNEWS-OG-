@@ -226,5 +226,25 @@ describe('./api', () => {
           expect(body.article.article_id).to.equal(4);
         });
     });
+    it.only('[[PATCH]] - [status 400] - gives an error when inc_vote = string ', () => {
+      const newVote = { inc_vote: 'wrong input' };
+      return request
+        .patch('/api/articles/3')
+        .send(newVote)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).to.equal('value for vote must must be a number');
+        });
+    });
+    it.only('[[PATCH]] - [status 400] - gives an error when inc_vote is missing ', () => {
+      const newVote = {};
+      return request
+        .patch('/api/articles/2')
+        .send(newVote)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).to.equal('input for updating vote is missing');
+        });
+    });
   });
 });

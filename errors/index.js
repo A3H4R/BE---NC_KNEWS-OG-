@@ -5,7 +5,9 @@ exports.handle400 = (err, req, res, next) => {
     '22P02': 'invalid input syntax for type integer',
   };
   if (codes[err.code]) res.status(400).send({ message: codes[err.code] });
-  else next(err);
+  else if (err.status === 400) {
+    res.status(400).send({ message: err.message });
+  } else next(err);
 };
 
 exports.handle404 = (err, req, res, next) => {
