@@ -1,8 +1,9 @@
 \c nc_knews_test
-    select * from topics;
-    select * from users;
-    select * from articles;
-    select * from comments;
+    -- select * from topics;
+    -- select * from users;
+      select * from articles;
+    select * from articles ORDER BY created_at desc limit 10;
+    -- select * from comments;
 
 -- SELECT comments.article_id, COUNT(comment_id) AS comment_count
 -- FROM comments 

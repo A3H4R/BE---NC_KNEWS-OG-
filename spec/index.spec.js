@@ -139,4 +139,69 @@ describe('./api', () => {
       });
     });
   });
+  describe('/articles', () => {
+    it('[[GET]] - [status 200] - responds with array of articles objects', () => request
+      .get('/api/articles')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).to.be.an('array');
+        expect(body.articles[0]).to.have.all.keys('title', 'topic', 'body', 'created_at', 'article_id', 'author', 'votes', 'comment_count');
+      }));
+    it('[[GET]] - [status 200] - defaults to giving back 10 article objects [-[DEFAULT CASE]-]', () => request
+      .get('/api/articles')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).to.have.lengthOf('10');
+      }));
+    it('[[GET]] - [status 200] - takes a limit query and responds with correct number of article objects', () => request
+      .get('/api/articles?limit=8')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).to.have.lengthOf('8');
+      }));
+    it('[[GET]] - [status 200] - defaults to ordering article objects by date [-[DEFAULT CASE]-]', () => request
+      .get('/api/articles')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[0].article_id).to.equal(1);
+        expect(body.articles[9].article_id).to.equal(10);
+      }));
+    it('[[GET]] - [status 200] - takes a sort_by query and responds with sorting article objects by specified column', () => request
+      .get('/api/articles?sort_by=title')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[0].title).to.equal('Z');
+        expect(body.articles[9].title).to.equal('Does Mitch predate civilisation?');
+      }));
+    it('[[GET]] - [status 200] - responds with article objects skipping rows to the specified offset value', () => request
+      .get('/api/articles?p=6')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).to.have.lengthOf('6');
+      }));
+    it('[[GET]] - [status 200] - defaults with article objects ordered in descending order [-[DEFAULT CASE]-]', () => request
+      .get('/api/articles?sort_by=article_id')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[0].article_id).to.equal(12);
+        expect(body.articles[9].article_id).to.equal(3);
+      }));
+    it('[[GET]] - [status 200] - takes order query responds with article objects ordered in ascending order', () => request
+      .get('/api/articles?sort_by=article_id&order=asc')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[0].article_id).to.equal(1);
+        expect(body.articles[9].article_id).to.equal(10);
+      }));
+  });
+  describe('/api/articles/:article_id', () => {
+    it.only('[[GET]] - [status 200] - responds with array of articles objects', () => request
+      .get('/api/articles/4')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article[0]).to.be.an('object');
+        expect(body.article[0]).to.have.all.keys('title', 'topic', 'body', 'created_at', 'article_id', 'author', 'votes', 'comment_count');
+        expect(body.article[0].article_id).to.equal(4);
+      }));
+  });
 });

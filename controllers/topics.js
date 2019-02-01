@@ -1,4 +1,4 @@
-const connection = require('../db/connection');
+
 const {
   fetchTopics, addTopic, fetchArticlesByTopic, addArticle,
 } = require('../db/models/topics');
