@@ -215,7 +215,7 @@ describe('./api', () => {
     //   .then(({ body }) => {
     //     expect(body.article).to.have.lengthOf('8');
     //   }));
-    it.only('[[PATCH]] - [status 200] - takes a body and increments the article votes by number specified ', () => {
+    it('[[PATCH]] - [status 200] - takes a body and increments the article votes by number specified ', () => {
       const newVote = { inc_vote: 25 };
       return request
         .patch('/api/articles/4')
@@ -226,7 +226,7 @@ describe('./api', () => {
           expect(body.article.article_id).to.equal(4);
         });
     });
-    it.only('[[PATCH]] - [status 400] - gives an error when inc_vote = string ', () => {
+    it('[[PATCH]] - [status 400] - gives an error when inc_vote = string ', () => {
       const newVote = { inc_vote: 'wrong input' };
       return request
         .patch('/api/articles/3')
@@ -236,7 +236,7 @@ describe('./api', () => {
           expect(body.message).to.equal('value for vote must must be a number');
         });
     });
-    it.only('[[PATCH]] - [status 400] - gives an error when inc_vote is missing ', () => {
+    it('[[PATCH]] - [status 400] - gives an error when inc_vote is missing ', () => {
       const newVote = {};
       return request
         .patch('/api/articles/2')
@@ -246,5 +246,51 @@ describe('./api', () => {
           expect(body.message).to.equal('input for updating vote is missing');
         });
     });
+    it('[[DELETE]] - [status 204] - deletes the specified article', () => request
+      .delete('/api/articles/6')
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).to.eql({});
+      }));
+    it('[[DELETE]] - [status 400] - throws error when given incorrect article_id', () => request
+      .delete('/api/articles/coffee')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).to.equal('invalid input syntax for type integer');
+      }));
+  });
+  describe.only('/api/articles/:article_id/comments', () => {
+    it('[[GET]] - [status 200] - responds with array of topic objects', () => request
+      .get('/api/articles/5/comments')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).to.be.an('array');
+        expect(body.comments[0]).to.have.all.keys('comment_id', 'votes', 'body', 'author', 'created_at');
+        expect(body.comments).to.have.lengthOf(2);
+      }));
+    it('[[GET]] - [status 404] - throws error when article has 0 comments', () => request
+      .get('/api/articles/4/comments')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).to.equal('no comments found for this article');
+      }));
+    it('[[GET]] - [status 404] - throws error when article_id is a string', () => request
+      .get('/api/articles/animals/comments')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).to.equal('invalid input syntax for type integer');
+      }));
+    it('[[GET]] - [status 200] - defaults to giving back 10 comment objects [-[DEFAULT CASE]-]', () => request
+      .get('/api/articles/1/comments')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).to.have.lengthOf('10');
+      }));
+    it('[[GET]] - [status 200] - takes a limit query and responds with correct number of article objects', () => request
+      .get('/api/articles/1/comments?limit=5')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).to.have.lengthOf('5');
+      }));
   });
 });

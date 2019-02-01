@@ -1,4 +1,5 @@
 exports.handle400 = (err, req, res, next) => {
+  // console.log(err);
   const codes = {
     23502: 'invalid input - violates not null violation',
     23503: 'username does not exist',

@@ -21,8 +21,10 @@ exports.fetchArticlesById = (article_id, limit = 10, sort_by = 'created_at', ord
 
 exports.changeVote = (article_id, inc_vote) => connection('articles').where('articles.article_id', '=', article_id).increment('votes', inc_vote).returning('*');
 
+exports.removeArticle = article_id => connection('articles').where('articles.article_id', '=', article_id).del();
 
-// knex('accounts'))
-//   .where('userid', '=', 1)
-//   .increment('balance', 10)
-// ;
+exports.fetchCommentsFromArticle = (article_id, limit = 10) => connection('comments')
+  .select('comment_id', 'comments.username AS author', 'comments.votes', 'comments.created_at', 'comments.body')
+  .join('articles', 'comments.article_id', '=', 'articles.article_id')
+  .where('articles.article_id', '=', article_id)
+  .limit(limit);

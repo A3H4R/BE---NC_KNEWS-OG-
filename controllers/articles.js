@@ -1,5 +1,5 @@
 const {
-  fetchArticles, fetchArticlesById, changeVote,
+  fetchArticles, fetchArticlesById, changeVote, removeArticle, fetchCommentsFromArticle,
 } = require('../db/models/articles');
 
 
@@ -27,16 +27,35 @@ exports.getArticlesById = (req, res, next) => {
 exports.updateVote = (req, res, next) => {
   const { inc_vote = 0 } = req.body;
   const { article_id } = req.params;
-  console.log(article_id);
+
   changeVote(article_id, inc_vote)
     .then(([article]) => {
-      console.log(typeof inc_vote);
       if (typeof inc_vote !== 'number') {
         next({ status: 400, message: 'value for vote must must be a number' });
       } else if (!inc_vote) next({ status: 400, message: 'input for updating vote is missing' });
       else {
         res.status(200).send({ article });
       }
+    })
+    .catch(next);
+};
+
+exports.deleteArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+  removeArticle(article_id)
+    .then(deleteArticle => res.status(204).send({ deleteArticle }))
+    .catch(next);
+};
+
+exports.getCommentsFromArticle = (req, res, next) => {
+  const {
+    limit, sort_by, sort_ascending, p,
+  } = req.query;
+  const { article_id } = req.params;
+  fetchCommentsFromArticle(article_id, limit)
+    .then((comments) => {
+      if (comments.length === 0) next({ status: 404, message: 'no comments found for this article' });
+      else res.status(200).send({ comments });
     })
     .catch(next);
 };

@@ -5,7 +5,7 @@ exports.up = function (connection, Promise) {
       .string('username')
       .references('users.username')
       .notNullable();
-    comments_table.integer('article_id').references('articles.article_id');
+    comments_table.integer('article_id').references('articles.article_id').onDelete('CASCADE');
     comments_table
       .integer('votes')
       .defaultTo(0)
