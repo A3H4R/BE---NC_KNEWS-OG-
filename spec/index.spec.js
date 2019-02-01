@@ -195,13 +195,36 @@ describe('./api', () => {
       }));
   });
   describe('/api/articles/:article_id', () => {
-    it.only('[[GET]] - [status 200] - responds with array of articles objects', () => request
+    it('[[GET]] - [status 200] - responds with specified article object ', () => request
       .get('/api/articles/4')
       .expect(200)
       .then(({ body }) => {
-        expect(body.article[0]).to.be.an('object');
-        expect(body.article[0]).to.have.all.keys('title', 'topic', 'body', 'created_at', 'article_id', 'author', 'votes', 'comment_count');
+        expect(body.article[0]).to.contain.keys('title', 'topic', 'body', 'created_at', 'article_id', 'author', 'votes', 'comment_count');
         expect(body.article[0].article_id).to.equal(4);
       }));
+    // it('[[GET]] - [status 200] - defaults to giving back 10 article objects [-[DEFAULT CASE]-]', () => request
+    //   .get('/api/articles/7')
+    //   .expect(200)
+    //   .then(({ body }) => {
+    //     console.log(body) || expect(body.article[0]).to.be.an('object');
+    //     expect(body.article).to.have.lengthOf('1');
+    //   }));
+    // it('[[GET]] - [status 200] - takes a limit query and responds with correct number of article objects', () => request
+    //   .get('/api/articles?limit=8')
+    //   .expect(200)
+    //   .then(({ body }) => {
+    //     expect(body.article).to.have.lengthOf('8');
+    //   }));
+    it.only('[[PATCH]] - [status 200] - takes a body and increments the article votes by number specified ', () => {
+      const newVote = { inc_vote: 25 };
+      return request
+        .patch('/api/articles/4')
+        .send(newVote)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article.votes).to.equal(25);
+          expect(body.article.article_id).to.equal(4);
+        });
+    });
   });
 });

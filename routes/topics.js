@@ -5,10 +5,12 @@ const {
   getTopics, createTopic, getArticlesByTopic, createArticleByTopic,
 } = require('../controllers/topics');
 
-topicsRouter.get('/', getTopics);
-topicsRouter.post('/', createTopic);
+topicsRouter.route('/')
+  .get(getTopics)
+  .post(createTopic);
 
-topicsRouter.get('/:topic/articles', getArticlesByTopic);
-topicsRouter.post('/:topic/articles', createArticleByTopic);
+topicsRouter.route('/:topic/articles')
+  .get(getArticlesByTopic)
+  .post(createArticleByTopic);
 
 module.exports = topicsRouter;
