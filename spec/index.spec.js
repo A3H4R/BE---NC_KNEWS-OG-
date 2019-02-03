@@ -379,5 +379,24 @@ describe('./api', () => {
           expect(body.message).to.equal('input for updating vote is missing');
         });
     });
+    it.only('[[DELETE]] - [status 204] - deletes the specified comment', () => request
+      .delete('/api/articles/6/comments/16')
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).to.eql({});
+      }));
+    it.only('[[DELETE]] - [status 400] - throws error when given incorrect comment_id', () => request
+      .delete('/api/articles/6/comments/Northcoders')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).to.equal('invalid input syntax for type integer');
+      }));
+    // --------------------------------------------------------------------> NEED TO ADD
+    // it.only('[[DELETE]] - [status 400] - throws error when given comment_id that does not exist', () => request
+    //   .delete('/api/articles/6/comments/900')
+    //   .expect(400)
+    //   .then(({ body }) => {
+    //     console.log(body) || expect(body.message).to.equal('Comment_id provided does not exist');
+    //   }));
   });
 });

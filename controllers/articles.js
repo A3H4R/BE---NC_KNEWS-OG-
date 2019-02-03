@@ -1,6 +1,6 @@
 const {
   fetchArticles, fetchArticlesById, changeVote, removeArticle,
-  fetchCommentsFromArticle, createComment, addVoteToComment,
+  fetchCommentsFromArticle, createComment, addVoteToComment, removeComment,
 } = require('../db/models/articles');
 
 
@@ -96,5 +96,13 @@ exports.updateCommentVote = (req, res, next) => {
         res.status(200).send({ comment });
       }
     })
+    .catch(next);
+};
+
+
+exports.deleteComment = (req, res, next) => {
+  const { article_id, comment_id } = req.params;
+  removeComment(article_id, comment_id)
+    .then(deleteComment => res.status(204).send({ deleteComment }))
     .catch(next);
 };

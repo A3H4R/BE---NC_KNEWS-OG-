@@ -3,7 +3,7 @@ const articlesRouter = require('express').Router();
 
 const {
   getArticles, getArticlesById, updateVote, deleteArticleById,
-  getCommentsFromArticle, addComment, updateCommentVote,
+  getCommentsFromArticle, addComment, updateCommentVote, deleteComment,
 } = require('../controllers/articles');
 
 articlesRouter.get('/', getArticles);
@@ -17,6 +17,7 @@ articlesRouter.route('/:article_id/comments')
   .post(addComment);
 
 articlesRouter.route('/:article_id/comments/:comment_id')
-  .patch(updateCommentVote);
+  .patch(updateCommentVote)
+  .delete(deleteComment);
 
 module.exports = articlesRouter;

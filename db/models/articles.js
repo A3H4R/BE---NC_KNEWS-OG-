@@ -34,3 +34,5 @@ exports.fetchCommentsFromArticle = (article_id, limit = 10, sort_by = 'created_a
 exports.createComment = newComment => connection('comments').insert(newComment).returning('*');
 
 exports.addVoteToComment = (article_id, comment_id, inc_vote) => connection('comments').where('comments.comment_id', '=', comment_id).increment('votes', inc_vote).returning('*');
+
+exports.removeComment = (article_id, comment_id) => connection('comments').where('comments.comment_id', '=', comment_id).del();
