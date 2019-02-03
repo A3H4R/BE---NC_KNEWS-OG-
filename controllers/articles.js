@@ -1,5 +1,6 @@
 const {
-  fetchArticles, fetchArticlesById, changeVote, removeArticle, fetchCommentsFromArticle, createComment,
+  fetchArticles, fetchArticlesById, changeVote, removeArticle,
+  fetchCommentsFromArticle, createComment, addVoteToComment,
 } = require('../db/models/articles');
 
 
@@ -78,5 +79,22 @@ exports.addComment = (req, res, next) => {
 
   createComment({ username, body, article_id })
     .then(([newComment]) => res.status(201).send({ newComment }))
+    .catch(next);
+};
+
+
+exports.updateCommentVote = (req, res, next) => {
+  const { inc_vote = 0 } = req.body;
+  const { article_id, comment_id } = req.params;
+
+  addVoteToComment(article_id, comment_id, inc_vote)
+    .then(([comment]) => {
+      if (typeof inc_vote !== 'number') {
+        next({ status: 400, message: 'value for vote must must be a number' });
+      } else if (!inc_vote) next({ status: 400, message: 'input for updating vote is missing' });
+      else {
+        res.status(200).send({ comment });
+      }
+    })
     .catch(next);
 };

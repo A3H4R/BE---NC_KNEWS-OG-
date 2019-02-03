@@ -338,7 +338,7 @@ describe('./api', () => {
           expect(body.newComment.body).to.equal(newComment.body);
         });
     });
-    it.only('[[POST]] - [status 400] gives error when username property is null (i.e - missing)', () => {
+    it('[[POST]] - [status 400] gives error when username property is null (i.e - missing)', () => {
       const newComment = { body: 'Fantastic article to read' };
       return request
         .post('/api/articles/3/comments')
@@ -348,6 +348,36 @@ describe('./api', () => {
           expect(body.message).to.equal('invalid input - violates not null violation');
         });
     });
-    //  >>>>> patch test
+    it('[[PATCH]] - [status 200] - takes a body and increments the article votes by number specified ', () => {
+      const newVote = { inc_vote: 77 };
+      return request
+        .patch('/api/articles/9/comments/1')
+        .send(newVote)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comment.votes).to.equal(93);
+          expect(body.comment.comment_id).to.equal(1);
+        });
+    });
+    it('[[PATCH]] - [status 400] - gives an error when inc_vote = string ', () => {
+      const newVote = { inc_vote: 'wrong input' };
+      return request
+        .patch('/api/articles/9/comments/1')
+        .send(newVote)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).to.equal('value for vote must must be a number');
+        });
+    });
+    it('[[PATCH]] - [status 400] - gives an error when inc_vote is missing ', () => {
+      const newVote = {};
+      return request
+        .patch('/api/articles/9/comments/1')
+        .send(newVote)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).to.equal('input for updating vote is missing');
+        });
+    });
   });
 });
