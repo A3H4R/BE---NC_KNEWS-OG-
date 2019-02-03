@@ -1,6 +1,6 @@
 const {
   fetchArticles, fetchArticlesById, changeVote, removeArticle,
-  fetchCommentsFromArticle, createComment, addVoteToComment, removeComment,
+  fetchCommentsFromArticle, createComment, addVoteToComment, removeComment, fetchAllUsers,
 } = require('../db/models/articles');
 
 

@@ -202,19 +202,6 @@ describe('./api', () => {
         expect(body.article[0]).to.contain.keys('title', 'topic', 'body', 'created_at', 'article_id', 'author', 'votes', 'comment_count');
         expect(body.article[0].article_id).to.equal(4);
       }));
-    // it('[[GET]] - [status 200] - defaults to giving back 10 article objects [-[DEFAULT CASE]-]', () => request
-    //   .get('/api/articles/7')
-    //   .expect(200)
-    //   .then(({ body }) => {
-    //     console.log(body) || expect(body.article[0]).to.be.an('object');
-    //     expect(body.article).to.have.lengthOf('1');
-    //   }));
-    // it('[[GET]] - [status 200] - takes a limit query and responds with correct number of article objects', () => request
-    //   .get('/api/articles?limit=8')
-    //   .expect(200)
-    //   .then(({ body }) => {
-    //     expect(body.article).to.have.lengthOf('8');
-    //   }));
     it('[[PATCH]] - [status 200] - takes a body and increments the article votes by number specified ', () => {
       const newVote = { inc_vote: 25 };
       return request
@@ -348,6 +335,8 @@ describe('./api', () => {
           expect(body.message).to.equal('invalid input - violates not null violation');
         });
     });
+  });
+  describe('/api/articles/:article_id/comments/:comment_id', () => {
     it('[[PATCH]] - [status 200] - takes a body and increments the article votes by number specified ', () => {
       const newVote = { inc_vote: 77 };
       return request
@@ -379,13 +368,13 @@ describe('./api', () => {
           expect(body.message).to.equal('input for updating vote is missing');
         });
     });
-    it.only('[[DELETE]] - [status 204] - deletes the specified comment', () => request
+    it('[[DELETE]] - [status 204] - deletes the specified comment', () => request
       .delete('/api/articles/6/comments/16')
       .expect(204)
       .then(({ body }) => {
         expect(body).to.eql({});
       }));
-    it.only('[[DELETE]] - [status 400] - throws error when given incorrect comment_id', () => request
+    it('[[DELETE]] - [status 400] - throws error when given incorrect comment_id', () => request
       .delete('/api/articles/6/comments/Northcoders')
       .expect(400)
       .then(({ body }) => {
@@ -397,6 +386,113 @@ describe('./api', () => {
     //   .expect(400)
     //   .then(({ body }) => {
     //     console.log(body) || expect(body.message).to.equal('Comment_id provided does not exist');
+    //   }));
+  });
+
+  describe('/api/users', () => {
+    it('[[GET]] - [status 200] - responds with array of user objects', () => request
+      .get('/api/users')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users).to.be.an('array');
+        expect(body.users[0]).to.contain.all.keys('username', 'avatar_url', 'name');
+      }));
+    it('[[POST]] - [status 201] - body accepts an object with username, name and avatar+url properties & responds with creating a new user', () => {
+      const newUser = { username: 'Ronaldo007', avatar_url: 'https://img.allfootballapp.com/www/M00/0D/75/480x-/-/-/rB8ApFt31wmAGPTGAAAsYwIaGlw539.jpg', name: 'Cristiano' };
+      return request
+        .post('/api/users')
+        .send(newUser)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.newUser.username).to.eql(newUser.username);
+          expect(body.newUser.name).to.eql(newUser.name);
+        });
+    });
+    it('[[POST]] - [status 400] gives error when avtar_url property is null (i.e - missing)', () => {
+      const newUser = { username: 'messi89', name: 'lionel' };
+      return request
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).to.equal('invalid input - violates not null violation');
+        });
+    });
+  });
+  describe('/api/users/:username', () => {
+    it('[[GET]] - [status 200] - responds with specified user object', () => request
+      .get('/api/users/icellusedkars')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.user).to.be.an('object');
+        expect(body.user).to.have.all.keys('username', 'avatar_url', 'name');
+      }));
+    // it('[[GET]] - [status 404] - throws error when specified user does not exist', () => request  <------------ FIX THIS [ADD ERROR LOGIC]
+    //   .get('/api/users/JoseMouriniho')
+    //   .expect(404)
+    //   .then(({ body }) => {
+    //     expect(body.message).to.equal('username does not exist');
+    //   }));
+  });
+  describe.only('/api/users/:username/articles', () => {
+    it('[[GET]] - [status 200] - responds with article objects created by the specified user', () => request
+      .get('/api/users/icellusedkars/articles')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).to.be.an('array');
+        expect(body.articles[0]).to.have.all.keys('author', 'topic', 'article_id', 'votes', 'title', 'created_at', 'comment_count');
+      }));
+    // it('[[GET]] - [status 404] - throws error when specified user does not exist', () => request  <------------ FIX THIS [ADD ERROR LOGIC]
+    //   .get('/api/users/spiderman491/articles')
+    //   .expect(404)
+    //   .then(({ body }) => {
+    //     expect(body.message).to.equal('username does not exist');
+    //   }));
+    it('[[GET]] - [status 200] - defaults to giving back 10 article objects [-[DEFAULT CASE]-]', () => request
+      .get('/api/users/icellusedkars/articles')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).to.have.lengthOf('6');
+      }));
+    it('[[GET]] - [status 200] - takes a limit query and responds with correct number of article objects', () => request
+      .get('/api/users/icellusedkars/articles?limit=3')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).to.have.lengthOf('3');
+      }));
+    it('[[GET]] - [status 200] - defaults to ordering article objects by date [-[DEFAULT CASE]-]', () => request
+      .get('/api/users/icellusedkars/articles')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[0].article_id).to.equal(11);
+        expect(body.articles[5].article_id).to.equal(2);
+      }));
+    it('[[GET]] - [status 200] - takes a sort_by query and responds with sorting article objects by specified column', () => request
+      .get('/api/users/icellusedkars/articles/?sort_by=title')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[0].title).to.equal('A');
+        expect(body.articles[5].title).to.equal('Z');
+      }));
+    // it('[[GET]] - [status 200] - responds with article objects skipping rows to the specified offset value', () => request
+    //   .get('/api/topics/mitch/articles?p=3')
+    //   .expect(200)
+    //   .then(({ body }) => {
+    //     expect(body.articles).to.have.lengthOf('8');
+    //   }));
+    // it('[[GET]] - [status 200] - defaults with article objects ordered in descending order [-[DEFAULT CASE]-]', () => request
+    //   .get('/api/topics/mitch/articles?sort_by=article_id')
+    //   .expect(200)
+    //   .then(({ body }) => {
+    //     expect(body.articles[0].article_id).to.equal(12);
+    //     expect(body.articles[9].article_id).to.equal(2);
+    //   }));
+    // it('[[GET]] - [status 200] - takes order query responds with article objects ordered in ascending order', () => request
+    //   .get('/api/topics/mitch/articles?sort_by=article_id&order=asc')
+    //   .expect(200)
+    //   .then(({ body }) => {
+    //     expect(body.articles[0].article_id).to.equal(1);
+    //     expect(body.articles[9].article_id).to.equal(11);
     //   }));
   });
 });
