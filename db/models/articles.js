@@ -23,8 +23,12 @@ exports.changeVote = (article_id, inc_vote) => connection('articles').where('art
 
 exports.removeArticle = article_id => connection('articles').where('articles.article_id', '=', article_id).del();
 
-exports.fetchCommentsFromArticle = (article_id, limit = 10) => connection('comments')
+exports.fetchCommentsFromArticle = (article_id, limit = 10, sort_by = 'created_at', order, p) => connection('comments')
   .select('comment_id', 'comments.username AS author', 'comments.votes', 'comments.created_at', 'comments.body')
   .join('articles', 'comments.article_id', '=', 'articles.article_id')
   .where('articles.article_id', '=', article_id)
-  .limit(limit);
+  .orderBy(sort_by, order)
+  .limit(limit)
+  .offset(p);
+
+exports.createComment = newComment => connection('comments').insert(newComment).returning('*');

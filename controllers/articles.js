@@ -1,5 +1,5 @@
 const {
-  fetchArticles, fetchArticlesById, changeVote, removeArticle, fetchCommentsFromArticle,
+  fetchArticles, fetchArticlesById, changeVote, removeArticle, fetchCommentsFromArticle, createComment,
 } = require('../db/models/articles');
 
 
@@ -52,10 +52,31 @@ exports.getCommentsFromArticle = (req, res, next) => {
     limit, sort_by, sort_ascending, p,
   } = req.query;
   const { article_id } = req.params;
-  fetchCommentsFromArticle(article_id, limit)
-    .then((comments) => {
-      if (comments.length === 0) next({ status: 404, message: 'no comments found for this article' });
-      else res.status(200).send({ comments });
-    })
+
+  let order;
+
+  const commentsFromArticle = () => {
+    fetchCommentsFromArticle(article_id, limit, sort_by, order, p)
+      .then((comments) => {
+        if (comments.length === 0) next({ status: 404, message: 'no comments found for this article' });
+        else res.status(200).send({ comments });
+      })
+      .catch(next);
+  };
+  if (req.query.sort_ascending === 'true') {
+    order = 'asc';
+    commentsFromArticle();
+  } else {
+    order = 'desc';
+    commentsFromArticle();
+  }
+};
+
+exports.addComment = (req, res, next) => {
+  const { username, body } = req.body;
+  const { article_id } = req.params;
+
+  createComment({ username, body, article_id })
+    .then(([newComment]) => res.status(201).send({ newComment }))
     .catch(next);
 };

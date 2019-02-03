@@ -259,7 +259,7 @@ describe('./api', () => {
         expect(body.message).to.equal('invalid input syntax for type integer');
       }));
   });
-  describe.only('/api/articles/:article_id/comments', () => {
+  describe('/api/articles/:article_id/comments', () => {
     it('[[GET]] - [status 200] - responds with array of topic objects', () => request
       .get('/api/articles/5/comments')
       .expect(200)
@@ -286,11 +286,68 @@ describe('./api', () => {
       .then(({ body }) => {
         expect(body.comments).to.have.lengthOf('10');
       }));
-    it('[[GET]] - [status 200] - takes a limit query and responds with correct number of article objects', () => request
+    it('[[GET]] - [status 200] - takes a limit query and responds with correct number of comment objects', () => request
       .get('/api/articles/1/comments?limit=5')
       .expect(200)
       .then(({ body }) => {
         expect(body.comments).to.have.lengthOf('5');
       }));
+    it('[[GET]] - [status 200] - defaults to ordering comment objects by date [-[DEFAULT CASE]-]', () => request
+      .get('/api/articles/1/comments')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments[0].comment_id).to.equal(2);
+        expect(body.comments[9].comment_id).to.equal(11);
+      }));
+    it('[[GET]] - [status 200] - takes a sort_by query and responds with sorting comment objects by specified column', () => request
+      .get('/api/articles/1/comments/?sort_by=body')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments[0].body).to.equal('This morning, I showered for nine minutes.');
+        expect(body.comments[9].body).to.equal('git push origin master');
+      }));
+    //  MISSING 2 TESTS HERE     -------> /api/articles/1/comments?p=1 && the default case for testing p
+    //
+
+    it('[[GET]] - [status 200] - defaults with comment objects ordered in descending order [-[DEFAULT CASE]-]', () => request
+      .get('/api/articles/1/comments?sort_by=comment_id')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments[0].author).to.equal('butter_bridge');
+        expect(body.comments[0].comment_id).to.equal(18);
+        expect(body.comments[9].author).to.equal('icellusedkars');
+        expect(body.comments[9].comment_id).to.equal(5);
+      }));
+    it('[[GET]] - [status 200] - takes order query responds with comment objects ordered in ascending order', () => request
+      .get('/api/articles/1/comments?sort_by=comment_id&sort_ascending=true')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments[0].author).to.equal('butter_bridge');
+        expect(body.comments[0].comment_id).to.equal(2);
+        expect(body.comments[9].author).to.equal('icellusedkars');
+        expect(body.comments[9].comment_id).to.equal(11);
+      }));
+    it('[[POST]] - [status 201] - body accepts an object with username and body properties & responds with the posted comment object', () => {
+      const newComment = { username: 'butter_bridge', body: 'This article is a great read' };
+      return request
+        .post('/api/articles/8/comments')
+        .send(newComment)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.newComment.username).to.eql(newComment.username);
+          expect(body.newComment.body).to.equal(newComment.body);
+        });
+    });
+    it.only('[[POST]] - [status 400] gives error when username property is null (i.e - missing)', () => {
+      const newComment = { body: 'Fantastic article to read' };
+      return request
+        .post('/api/articles/3/comments')
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).to.equal('invalid input - violates not null violation');
+        });
+    });
+    //  >>>>> patch test
   });
 });
