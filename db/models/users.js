@@ -7,9 +7,7 @@ exports.totalArticlesByUsername = username => connection('articles')
 
 exports.fetchAllUsers = () => connection('users')
   .select('*');
-//   .orderBy(sort_by, order)
-//   .limit(limit)
-//   .offset(p);
+
 exports.createUser = newUser => connection('users').insert(newUser).returning('*');
 
 exports.fetchUser = username => connection('users').select('*').where('username', '=', username);

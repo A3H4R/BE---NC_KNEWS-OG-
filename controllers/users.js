@@ -21,9 +21,14 @@ exports.getUser = (req, res, next) => {
   const { username } = req.params;
 
   fetchUser(username)
-    .then(([user]) => res.status(200).send({ user }))
+    .then(([user]) => {
+      if (!user) {
+        return Promise.reject({ status: 404, message: 'username does not exist' });
+      } res.status(200).send({ user });
+    })
     .catch(next);
 };
+
 
 exports.getArticlesByUsername = (req, res, next) => {
   const {
@@ -36,6 +41,11 @@ exports.getArticlesByUsername = (req, res, next) => {
     fetchArticlesByUsername(username, limit, sort_by, order, p),
     totalArticlesByUsername(username),
   ])
-    .then(([articles, total_count]) => res.status(200).send({ articles, total_count }))
+    .then(([articles, total_count]) => {
+      if (articles.length === 0) {
+        return Promise.reject({ status: 404, message: 'username does not exist' });
+      }
+      res.status(200).send({ articles, total_count });
+    })
     .catch(err => next(err));
 };

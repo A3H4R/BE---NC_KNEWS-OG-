@@ -18,29 +18,6 @@ exports.getArticles = (req, res, next) => {
 };
 
 
-// exports.getArticlesByTopic = (req, res, next) => {
-//   const {
-//     limit,
-//     sort_by,
-//     order,articles, total_count
-//     p,
-//   } = req.query;
-//   const topic = req.params.topic;
-
-//   Promise.all([
-//     fetchArticlesByTopic(topic, limit, sort_by, order, p),
-//     totalArticlesByTopic(topic),
-//   ])
-//     .then(([articles, total_count]) => {
-//       if (articles.length === 0) {
-//         return Promise.reject({ status: 404, message: 'topic does not exist' });
-//       }
-//       res.status(200).send({ articles, total_count });
-//     })
-//     .catch(err => next(err));
-// };
-
-
 exports.getArticlesById = (req, res, next) => {
   const {
     limit, sort_by, order, p,
@@ -58,12 +35,12 @@ exports.updateVote = (req, res, next) => {
   changeVote(article_id, inc_vote)
     .then(([article]) => {
       if (typeof inc_vote !== 'number') {
-        return Promise.reject({ status: 400, message: 'value for vote must must be a number' });
+        return Promise.reject({ status: 400, message: 'value for vote must be a number' });
       } if (!inc_vote) return Promise.reject({ status: 400, message: 'input for updating vote is missing' });
 
       res.status(200).send({ article });
     })
-    .catch(next);
+    .catch(err => next(err));
 };
 
 exports.deleteArticleById = (req, res, next) => {
@@ -121,12 +98,14 @@ exports.updateCommentVote = (req, res, next) => {
 
       res.status(200).send({ comment });
     })
-    .catch(next);
+    .catch(err => next(err));
 };
 
 
 exports.deleteComment = (req, res, next) => {
   const { article_id, comment_id } = req.params;
+  console.log(comment_id, `<<<<<<<<< ??????? >>>>>>>>    ${article_id}`);
+
   removeComment(article_id, comment_id)
     .then(deleteComment => res.status(204).send({ deleteComment }))
     .catch(next);

@@ -15,7 +15,7 @@ describe('./api', () => {
   after(() => {
     connection.destroy();
   });
-  it.only('[[GET]] - [status 200] - responds with array of all the endpoints objects', () => request
+  it('[[GET]] - [status 200] - responds with array of all the endpoints objects', () => request
     .get('/api/')
     .expect(200)
     .then(({ body }) => {
@@ -256,7 +256,7 @@ describe('./api', () => {
         .send(newVote)
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).to.equal('value for vote must must be a number');
+          expect(body.message).to.equal('value for vote must be a number');
         });
     });
     it('[[PATCH]] - [status 400] - gives an error when inc_vote is missing ', () => {
@@ -417,7 +417,7 @@ describe('./api', () => {
           expect(body.message).to.equal('input for updating vote is missing');
         });
     });
-    it('[[DELETE]] - [status 204] - deletes the specified comment', () => request
+    it.only('[[DELETE]] - [status 204] - deletes the specified comment', () => request
       .delete('/api/articles/6/comments/16')
       .expect(204)
       .then(({ body }) => {
@@ -430,7 +430,7 @@ describe('./api', () => {
         expect(body.message).to.equal('invalid input syntax for type integer');
       }));
     // --------------------------------------------------------------------> NEED TO ADD
-    it('[[DELETE]] - [status 400] - throws error when given comment_id that does not exist', () => request
+    it.only('[[DELETE]] - [status 400] - throws error when given comment_id that does not exist', () => request
       .delete('/api/articles/6/comments/900')
       .expect(400)
       .then(({ body }) => {
@@ -476,12 +476,12 @@ describe('./api', () => {
         expect(body.user).to.be.an('object');
         expect(body.user).to.have.all.keys('username', 'avatar_url', 'name');
       }));
-    // it('[[GET]] - [status 404] - throws error when specified user does not exist', () => request  <------------ FIX THIS [ADD ERROR LOGIC] promise.reject
-    //   .get('/api/users/JoseMouriniho')
-    //   .expect(404)
-    //   .then(({ body }) => {
-    //     expect(body.message).to.equal('username does not exist');
-    //   }));
+    it('[[GET]] - [status 404] - throws error when specified user does not exist', () => request
+      .get('/api/users/JoseMouriniho')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).to.equal('username does not exist');
+      }));
   });
   describe('/api/users/:username/articles', () => {
     it('[[GET]] - [status 200] - responds with article objects created by the specified user', () => request
@@ -491,12 +491,12 @@ describe('./api', () => {
         expect(body.articles).to.be.an('array');
         expect(body.articles[0]).to.have.all.keys('author', 'topic', 'article_id', 'votes', 'title', 'created_at', 'comment_count');
       }));
-    // it('[[GET]] - [status 404] - throws error when specified user does not exist', () => request  <------------ FIX THIS [ADD ERROR LOGIC] promise.reject
-    //   .get('/api/users/spiderman491/articles')
-    //   .expect(404)
-    //   .then(({ body }) => {
-    //     expect(body.message).to.equal('username does not exist');
-    //   }));
+    it('[[GET]] - [status 404] - throws error when specified user does not exist', () => request
+      .get('/api/users/spiderman491/articles')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).to.equal('username does not exist');
+      }));
     it('[[GET]] - [status 200] - defaults to giving back 10 article objects [-[DEFAULT CASE]-]', () => request
       .get('/api/users/icellusedkars/articles')
       .expect(200)
