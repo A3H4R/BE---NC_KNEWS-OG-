@@ -15,6 +15,22 @@ describe('./api', () => {
   after(() => {
     connection.destroy();
   });
+  it.only('[[GET]] - [status 200] - responds with array of all the endpoints objects', () => request
+    .get('/api/')
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.allEndpointsObj).to.have.all.keys(
+        '/api/topics',
+        '/api/topics/:topic/articles',
+        '/api/articles',
+        '/api/articles/:article_id',
+        '/api/articles/:article_id/comments',
+        '/api/articles/:article_id/comments/:comment_id',
+        '/api/users',
+        '/api/users/:username',
+        '/api/users/:username/articles',
+      );
+    }));
 
   describe('/topics', () => {
     it('[[GET]] - [status 200] - responds with array of topic objects', () => request
