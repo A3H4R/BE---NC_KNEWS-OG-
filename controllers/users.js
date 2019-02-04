@@ -19,6 +19,7 @@ exports.addUser = (req, res, next) => {
 };
 exports.getUser = (req, res, next) => {
   const { username } = req.params;
+
   fetchUser(username)
     .then(([user]) => res.status(200).send({ user }))
     .catch(next);
@@ -28,8 +29,10 @@ exports.getArticlesByUsername = (req, res, next) => {
   const {
     limit, sort_by, order, p,
   } = req.query;
+
   const { username } = req.params;
-  fetchArticlesByUsername(username, limit, sort_by)
+
+  fetchArticlesByUsername(username, limit, sort_by, order, p)
     .then(articles => res.status(200).send({ articles }))
     .catch(next);
 };

@@ -464,35 +464,35 @@ describe('./api', () => {
       .get('/api/users/icellusedkars/articles')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles[0].article_id).to.equal(11);
-        expect(body.articles[5].article_id).to.equal(2);
+        expect(body.articles[0].created_at).to.equal('2014-11-16T12:21:54.171Z');
+        expect(body.articles[5].created_at).to.equal('1978-11-25T12:21:54.171Z');
       }));
     it('[[GET]] - [status 200] - takes a sort_by query and responds with sorting article objects by specified column', () => request
       .get('/api/users/icellusedkars/articles/?sort_by=title')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles[0].title).to.equal('A');
-        expect(body.articles[5].title).to.equal('Z');
+        expect(body.articles[0].title).to.equal('Z');
+        expect(body.articles[5].title).to.equal('A');
       }));
-    // it('[[GET]] - [status 200] - responds with article objects skipping rows to the specified offset value', () => request
-    //   .get('/api/topics/mitch/articles?p=3')
-    //   .expect(200)
-    //   .then(({ body }) => {
-    //     expect(body.articles).to.have.lengthOf('8');
-    //   }));
-    // it('[[GET]] - [status 200] - defaults with article objects ordered in descending order [-[DEFAULT CASE]-]', () => request
-    //   .get('/api/topics/mitch/articles?sort_by=article_id')
-    //   .expect(200)
-    //   .then(({ body }) => {
-    //     expect(body.articles[0].article_id).to.equal(12);
-    //     expect(body.articles[9].article_id).to.equal(2);
-    //   }));
-    // it('[[GET]] - [status 200] - takes order query responds with article objects ordered in ascending order', () => request
-    //   .get('/api/topics/mitch/articles?sort_by=article_id&order=asc')
-    //   .expect(200)
-    //   .then(({ body }) => {
-    //     expect(body.articles[0].article_id).to.equal(1);
-    //     expect(body.articles[9].article_id).to.equal(11);
-    //   }));
+    it('[[GET]] - [status 200] - responds with article objects skipping rows to the specified offset value', () => request
+      .get('/api/users/icellusedkars/articles/?p=3')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).to.have.lengthOf('3');
+      }));
+    it('[[GET]] - [status 200] - defaults with article objects ordered in descending order [-[DEFAULT CASE]-]', () => request
+      .get('/api/users/icellusedkars/articles/?sort_by=article_id')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[0].article_id).to.equal(11);
+        expect(body.articles[5].article_id).to.equal(2);
+      }));
+    it('[[GET]] - [status 200] - takes order query responds with article objects ordered in ascending order', () => request
+      .get('/api/users/icellusedkars/articles/?sort_by=article_id&order=asc')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[0].article_id).to.equal(2);
+        expect(body.articles[5].article_id).to.equal(11);
+      }));
   });
 });
