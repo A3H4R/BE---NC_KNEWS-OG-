@@ -1,5 +1,10 @@
 const connection = require('../connection');
 
+exports.totalArticlesByUsername = username => connection('articles')
+  .count('articles.article_id as total_count')
+  .where('username', '=', username)
+  .returning('*');
+
 exports.fetchAllUsers = () => connection('users')
   .select('*');
 //   .orderBy(sort_by, order)

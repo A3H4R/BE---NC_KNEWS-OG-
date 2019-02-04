@@ -1,9 +1,9 @@
 const connection = require('../connection');
 
-exports.totalArticlesCount = topic => connection('articles')
-  .count('article_id')
+exports.totalArticlesByTopic = topic => connection('articles')
+  .count('articles.article_id as total_count')
   .where('topic', '=', topic)
-  .then(([{ total }]) => total);
+  .returning('*');
 
 
 exports.fetchTopics = () => connection('topics').select('*');

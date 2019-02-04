@@ -1,6 +1,6 @@
 
 const {
-  fetchAllUsers, createUser, fetchArticlesByUsername, fetchUser,
+  fetchAllUsers, createUser, fetchArticlesByUsername, fetchUser, totalArticlesByUsername,
 } = require('../db/models/users');
 
 
@@ -32,7 +32,10 @@ exports.getArticlesByUsername = (req, res, next) => {
 
   const { username } = req.params;
 
-  fetchArticlesByUsername(username, limit, sort_by, order, p)
-    .then(articles => res.status(200).send({ articles }))
-    .catch(next);
+  Promise.all([
+    fetchArticlesByUsername(username, limit, sort_by, order, p),
+    totalArticlesByUsername(username),
+  ])
+    .then(([articles, total_count]) => res.status(200).send({ articles, total_count }))
+    .catch(err => next(err));
 };

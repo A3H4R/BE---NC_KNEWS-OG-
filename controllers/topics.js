@@ -1,14 +1,8 @@
 
 const {
-  fetchTopics, addTopic, fetchArticlesByTopic, addArticle, totalArticlesCount,
+  fetchTopics, addTopic, fetchArticlesByTopic, addArticle, totalArticlesByTopic,
 } = require('../db/models/topics');
 
-// const { topic } = req.params.topic;
-// exports.getTotalArticles = (req, res, next) => {
-// totalArticlesCount(topic)
-//     .then(total => res.send({ total }))
-//     .catch(next);
-// };
 
 exports.getTopics = (req, res, next) => {
   fetchTopics()
@@ -30,12 +24,16 @@ exports.getArticlesByTopic = (req, res, next) => {
     p,
   } = req.query;
   const topic = req.params.topic;
-  fetchArticlesByTopic(topic, limit, sort_by, order, p)
-    .then((articles) => {
+
+  Promise.all([
+    fetchArticlesByTopic(topic, limit, sort_by, order, p),
+    totalArticlesByTopic(topic),
+  ])
+    .then(([articles, total_count]) => {
       if (articles.length === 0) {
         return Promise.reject({ status: 404, message: 'topic does not exist' });
       }
-      res.status(200).send({ articles });
+      res.status(200).send({ articles, total_count });
     })
     .catch(err => next(err));
 };

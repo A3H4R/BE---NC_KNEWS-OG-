@@ -1,6 +1,6 @@
 const {
   fetchArticles, fetchArticlesById, changeVote, removeArticle,
-  fetchCommentsFromArticle, createComment, addVoteToComment, removeComment, fetchAllUsers,
+  fetchCommentsFromArticle, createComment, addVoteToComment, removeComment, totalArticles,
 } = require('../db/models/articles');
 
 
@@ -9,10 +9,36 @@ exports.getArticles = (req, res, next) => {
     limit, sort_by, order, p,
   } = req.query;
 
-  fetchArticles(limit, sort_by, order, p)
-    .then(articles => res.status(200).send({ articles }))
-    .catch(next);
+  Promise.all([
+    fetchArticles(limit, sort_by, order, p),
+    totalArticles(),
+  ])
+    .then(([articles, total_count]) => res.status(200).send({ articles, total_count }))
+    .catch(err => next(err));
 };
+
+
+// exports.getArticlesByTopic = (req, res, next) => {
+//   const {
+//     limit,
+//     sort_by,
+//     order,articles, total_count
+//     p,
+//   } = req.query;
+//   const topic = req.params.topic;
+
+//   Promise.all([
+//     fetchArticlesByTopic(topic, limit, sort_by, order, p),
+//     totalArticlesByTopic(topic),
+//   ])
+//     .then(([articles, total_count]) => {
+//       if (articles.length === 0) {
+//         return Promise.reject({ status: 404, message: 'topic does not exist' });
+//       }
+//       res.status(200).send({ articles, total_count });
+//     })
+//     .catch(err => next(err));
+// };
 
 
 exports.getArticlesById = (req, res, next) => {
@@ -90,11 +116,10 @@ exports.updateCommentVote = (req, res, next) => {
   addVoteToComment(article_id, comment_id, inc_vote)
     .then(([comment]) => {
       if (typeof inc_vote !== 'number') {
-        next({ status: 400, message: 'value for vote must must be a number' });
-      } else if (!inc_vote) next({ status: 400, message: 'input for updating vote is missing' });
-      else {
-        res.status(200).send({ comment });
-      }
+        return Promise.reject({ status: 400, message: 'value for vote must must be a number' });
+      } if (!inc_vote) return Promise.reject({ status: 400, message: 'input for updating vote is missing' });
+
+      res.status(200).send({ comment });
     })
     .catch(next);
 };

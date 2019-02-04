@@ -1,5 +1,8 @@
 const connection = require('../connection');
 
+exports.totalArticles = () => connection('articles')
+  .count('articles.article_id as total_count')
+  .returning('*');
 
 exports.fetchArticles = (limit = 10, sort_by = 'created_at', order = 'desc', p = 1) => connection('articles')
   .select('articles.article_id', 'articles.username AS author', 'topic', 'title', 'articles.body', 'articles.votes', 'articles.created_at')
