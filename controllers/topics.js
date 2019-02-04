@@ -1,7 +1,14 @@
 
 const {
-  fetchTopics, addTopic, fetchArticlesByTopic, addArticle,
+  fetchTopics, addTopic, fetchArticlesByTopic, addArticle, totalArticlesCount,
 } = require('../db/models/topics');
+
+// const { topic } = req.params.topic;
+// exports.getTotalArticles = (req, res, next) => {
+// totalArticlesCount(topic)
+//     .then(total => res.send({ total }))
+//     .catch(next);
+// };
 
 exports.getTopics = (req, res, next) => {
   fetchTopics()
@@ -26,12 +33,11 @@ exports.getArticlesByTopic = (req, res, next) => {
   fetchArticlesByTopic(topic, limit, sort_by, order, p)
     .then((articles) => {
       if (articles.length === 0) {
-        next({ status: 404, message: 'topic does not exist' });
-      } else {
-        res.status(200).send({ articles });
+        return Promise.reject({ status: 404, message: 'topic does not exist' });
       }
+      res.status(200).send({ articles });
     })
-    .catch(next);
+    .catch(err => next(err));
 };
 
 exports.createArticleByTopic = (req, res, next) => {

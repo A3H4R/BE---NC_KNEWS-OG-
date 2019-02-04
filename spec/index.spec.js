@@ -86,11 +86,21 @@ describe('./api', () => {
           expect(body.articles[0].title).to.equal('Z');
           expect(body.articles[9].title).to.equal('Am I a cat?');
         }));
-      it('[[GET]] - [status 200] - responds with article objects skipping rows to the specified offset value', () => request
-        .get('/api/topics/mitch/articles?p=3')
+      it('[[GET]] - [status 200] - responds with the correct articles when page number not specified [DEFAULT CASE]', () => request
+        .get('/api/topics/mitch/articles')
         .expect(200)
         .then(({ body }) => {
-          expect(body.articles).to.have.lengthOf('8');
+          expect(body.articles).to.have.lengthOf('10');
+          expect(body.articles[0].article_id).to.equal(1);
+          expect(body.articles[9].article_id).to.equal(11);
+        }));
+      it('[[GET]] - [status 200] - responds with the correct articles when page number and limit specified', () => request
+        .get('/api/topics/mitch/articles?limit=2&p=3')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).to.have.lengthOf('2');
+          expect(body.articles[0].article_id).to.equal(6);
+          expect(body.articles[1].article_id).to.equal(7);
         }));
       it('[[GET]] - [status 200] - defaults with article objects ordered in descending order [-[DEFAULT CASE]-]', () => request
         .get('/api/topics/mitch/articles?sort_by=article_id')
@@ -173,11 +183,21 @@ describe('./api', () => {
         expect(body.articles[0].title).to.equal('Z');
         expect(body.articles[9].title).to.equal('Does Mitch predate civilisation?');
       }));
-    it('[[GET]] - [status 200] - responds with article objects skipping rows to the specified offset value', () => request
-      .get('/api/articles?p=6')
+    it('[[GET]] - [status 200] - responds with the correct articles when page number not specified [DEFAULT CASE]', () => request
+      .get('/api/articles')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).to.have.lengthOf('6');
+        expect(body.articles).to.have.lengthOf('10');
+        expect(body.articles[0].article_id).to.equal(1);
+        expect(body.articles[9].article_id).to.equal(10);
+      }));
+    it('[[GET]] - [status 200] - responds with the correct articles when page number and limit specified', () => request
+      .get('/api/articles/?limit=2&p=3')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).to.have.lengthOf('2');
+        expect(body.articles[0].article_id).to.equal(5);
+        expect(body.articles[1].article_id).to.equal(6);
       }));
     it('[[GET]] - [status 200] - defaults with article objects ordered in descending order [-[DEFAULT CASE]-]', () => request
       .get('/api/articles?sort_by=article_id')
@@ -293,9 +313,22 @@ describe('./api', () => {
         expect(body.comments[0].body).to.equal('This morning, I showered for nine minutes.');
         expect(body.comments[9].body).to.equal('git push origin master');
       }));
-    //  MISSING 2 TESTS HERE     -------> /api/articles/1/comments?p=1 && the default case for testing p
-    //
-
+    it('[[GET]] - [status 200] - responds with the correct articles when page number not specified [DEFAULT CASE]', () => request
+      .get('/api/articles/1/comments')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).to.have.lengthOf('10');
+        expect(body.comments[0].comment_id).to.equal(2);
+        expect(body.comments[9].comment_id).to.equal(11);
+      }));
+    it('[[GET]] - [status 200] - responds with the correct articles when page number and limit specified', () => request
+      .get('/api/articles/1/comments/?limit=2&p=3')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).to.have.lengthOf('2');
+        expect(body.comments[0].comment_id).to.equal(6);
+        expect(body.comments[1].comment_id).to.equal(7);
+      }));
     it('[[GET]] - [status 200] - defaults with comment objects ordered in descending order [-[DEFAULT CASE]-]', () => request
       .get('/api/articles/1/comments?sort_by=comment_id')
       .expect(200)
@@ -427,14 +460,14 @@ describe('./api', () => {
         expect(body.user).to.be.an('object');
         expect(body.user).to.have.all.keys('username', 'avatar_url', 'name');
       }));
-    // it('[[GET]] - [status 404] - throws error when specified user does not exist', () => request  <------------ FIX THIS [ADD ERROR LOGIC]
+    // it('[[GET]] - [status 404] - throws error when specified user does not exist', () => request  <------------ FIX THIS [ADD ERROR LOGIC] promise.reject
     //   .get('/api/users/JoseMouriniho')
     //   .expect(404)
     //   .then(({ body }) => {
     //     expect(body.message).to.equal('username does not exist');
     //   }));
   });
-  describe.only('/api/users/:username/articles', () => {
+  describe('/api/users/:username/articles', () => {
     it('[[GET]] - [status 200] - responds with article objects created by the specified user', () => request
       .get('/api/users/icellusedkars/articles')
       .expect(200)
@@ -442,7 +475,7 @@ describe('./api', () => {
         expect(body.articles).to.be.an('array');
         expect(body.articles[0]).to.have.all.keys('author', 'topic', 'article_id', 'votes', 'title', 'created_at', 'comment_count');
       }));
-    // it('[[GET]] - [status 404] - throws error when specified user does not exist', () => request  <------------ FIX THIS [ADD ERROR LOGIC]
+    // it('[[GET]] - [status 404] - throws error when specified user does not exist', () => request  <------------ FIX THIS [ADD ERROR LOGIC] promise.reject
     //   .get('/api/users/spiderman491/articles')
     //   .expect(404)
     //   .then(({ body }) => {
@@ -474,11 +507,21 @@ describe('./api', () => {
         expect(body.articles[0].title).to.equal('Z');
         expect(body.articles[5].title).to.equal('A');
       }));
-    it('[[GET]] - [status 200] - responds with article objects skipping rows to the specified offset value', () => request
-      .get('/api/users/icellusedkars/articles/?p=3')
+    it('[[GET]] - [status 200] - responds with the correct articles when page number not specified [DEFAULT CASE]', () => request
+      .get('/api/users/icellusedkars/articles/')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).to.have.lengthOf('3');
+        expect(body.articles).to.have.lengthOf('6');
+        expect(body.articles[0].article_id).to.equal(2);
+        expect(body.articles[5].article_id).to.equal(11);
+      }));
+    it('[[GET]] - [status 200] - responds with the correct articles when page number and limit specified', () => request
+      .get('/api/users/icellusedkars/articles/?limit=2&p=3')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).to.have.lengthOf('2');
+        expect(body.articles[0].article_id).to.equal(8);
+        expect(body.articles[1].article_id).to.equal(11);
       }));
     it('[[GET]] - [status 200] - defaults with article objects ordered in descending order [-[DEFAULT CASE]-]', () => request
       .get('/api/users/icellusedkars/articles/?sort_by=article_id')

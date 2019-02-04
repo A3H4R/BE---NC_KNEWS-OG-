@@ -32,11 +32,10 @@ exports.updateVote = (req, res, next) => {
   changeVote(article_id, inc_vote)
     .then(([article]) => {
       if (typeof inc_vote !== 'number') {
-        next({ status: 400, message: 'value for vote must must be a number' });
-      } else if (!inc_vote) next({ status: 400, message: 'input for updating vote is missing' });
-      else {
-        res.status(200).send({ article });
-      }
+        return Promise.reject({ status: 400, message: 'value for vote must must be a number' });
+      } if (!inc_vote) return Promise.reject({ status: 400, message: 'input for updating vote is missing' });
+
+      res.status(200).send({ article });
     })
     .catch(next);
 };
@@ -59,10 +58,11 @@ exports.getCommentsFromArticle = (req, res, next) => {
   const commentsFromArticle = () => {
     fetchCommentsFromArticle(article_id, limit, sort_by, order, p)
       .then((comments) => {
-        if (comments.length === 0) next({ status: 404, message: 'no comments found for this article' });
-        else res.status(200).send({ comments });
+        if (comments.length === 0) return Promise.reject({ status: 404, message: 'no comments found for this article' });
+
+        res.status(200).send({ comments });
       })
-      .catch(next);
+      .catch(err => next(err));
   };
   if (req.query.sort_ascending === 'true') {
     order = 'asc';
