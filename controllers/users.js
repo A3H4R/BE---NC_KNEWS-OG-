@@ -43,7 +43,7 @@ exports.getArticlesByUsername = (req, res, next) => {
   ])
     .then(([articles, total_count]) => {
       if (articles.length === 0) {
-        return Promise.reject({ status: 404, message: 'username does not exist' });
+        return Promise.reject({ status: 404, message: 'No articles for this user' });
       }
       res.status(200).send({ articles, total_count });
     })

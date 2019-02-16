@@ -13,7 +13,9 @@ exports.getArticles = (req, res, next) => {
     fetchArticles(limit, sort_by, order, p),
     totalArticles(),
   ])
-    .then(([articles, total_count]) => res.status(200).send({ articles, total_count }))
+    .then(([articles, total_count]) => {
+      res.status(200).send({ articles, total_count });
+    })
     .catch(err => next(err));
 };
 
@@ -24,8 +26,13 @@ exports.getArticlesById = (req, res, next) => {
   } = req.query;
   const { article_id } = req.params;
   fetchArticlesById(article_id, limit, sort_by, order, p)
-    .then(article => res.status(200).send({ article }))
-    .catch(next);
+    .then((article) => {
+      if (article.length === 0) {
+        return Promise.reject({ status: 404, message: 'Article Not Found' });
+      }
+      res.status(200).send({ article });
+    })
+    .catch(err => next(err));
 };
 
 exports.updateVote = (req, res, next) => {
@@ -93,10 +100,10 @@ exports.updateCommentVote = (req, res, next) => {
   addVoteToComment(article_id, comment_id, inc_vote)
     .then(([comment]) => {
       if (typeof inc_vote !== 'number') {
-        return Promise.reject({ status: 400, message: 'value for vote must must be a number' });
+        return Promise.reject({ status: 400, message: 'value for vote must be a number' });
       } if (!inc_vote) return Promise.reject({ status: 400, message: 'input for updating vote is missing' });
 
-      res.status(200).send({ comment });
+      return res.status(200).send({ comment });
     })
     .catch(err => next(err));
 };
@@ -104,7 +111,6 @@ exports.updateCommentVote = (req, res, next) => {
 
 exports.deleteComment = (req, res, next) => {
   const { article_id, comment_id } = req.params;
-  console.log(comment_id, `<<<<<<<<< ??????? >>>>>>>>    ${article_id}`);
 
   removeComment(article_id, comment_id)
     .then(deleteComment => res.status(204).send({ deleteComment }))

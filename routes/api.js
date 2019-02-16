@@ -12,6 +12,6 @@ const getEndpoints = (req, res, next) => {
   res.status(200).send(allEndpointsObj);
 };
 
-apiRouter.use('/', getEndpoints);
+apiRouter.route('/').get(getEndpoints);
 
 module.exports = apiRouter;
