@@ -39,6 +39,15 @@ describe('./api', () => {
         'Error Code: 404 : Page Not Found',
       );
     }));
+  it('[[POST]] - [status 405] - responds with error when invalid method used on endpoint', () => request
+    .delete('/api/')
+    .expect(405)
+    .then(({ body }) => {
+      expect(body.message).to.equal(
+        'Error Code: 405 : INVALID METHOD',
+      );
+    }));
+
 
   describe('/topics', () => {
     it('[[GET]] - [status 404] - responds with correct error when invalid route supplied to endpoint', () => request
@@ -75,6 +84,16 @@ describe('./api', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.message).to.equal('Error Code: 400 - invalid input - violates not null violation');
+        });
+    });
+    it('[[POST]] - [status 422] gives error when trying to post a topic that already exists', () => {
+      const newTopic = { description: 'My Coding Journey', slug: 'mitch' };
+      return request
+        .post('/api/topics')
+        .send(newTopic)
+        .expect(422)
+        .then(({ body }) => {
+          expect(body.message).to.equal('Error Code: 422 - duplicate key value violates unique constraint ----> Key (slug)=(mitch) already exists.');
         });
     });
     describe('/topics/:topic/articles', () => {

@@ -1,3 +1,12 @@
+
+exports.handle422 = (err, req, res, next) => {
+  const codes = {
+    23505: `duplicate key value violates unique constraint ----> ${err.detail}`,
+  };
+  if (codes[err.code]) res.status(422).send({ message: `Error Code: ${res.statusCode} - ${codes[err.code]}` });
+  else next(err);
+};
+
 exports.handle400 = (err, req, res, next) => {
   const codes = {
     23502: 'invalid input - violates not null violation',
@@ -10,11 +19,6 @@ exports.handle400 = (err, req, res, next) => {
   } else next(err);
 };
 
-exports.handle405 = (err, req, res, next) => {
-  if (err.status === 405) {
-    res.status(405).send({ message: `Error Code: ${res.statusCode} - Method Not Allowed` });
-  }
-};
 
 exports.handle404 = (err, req, res, next) => {
   if (err.status === 404) {
@@ -24,11 +28,14 @@ exports.handle404 = (err, req, res, next) => {
   }
 };
 
-
-exports.handle500 = (err, req, res, next) => {
-  if (err.status === 500) {
-    res.status(500).send({ message: `${res.statusCode} - internal server error` });
+exports.handle405 = (err, req, res, next) => {
+  if (err.status === 405) {
+    res.sendStatus(405).send({ message: `Error Code: ${res.statusCode} - Method Not Allowed` });
   } else {
     next(err);
   }
+};
+
+exports.handle500 = (err, req, res, next) => {
+  res.status(500).send({ message: `${res.statusCode} - internal server error` });
 };

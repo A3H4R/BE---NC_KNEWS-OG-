@@ -27,5 +27,3 @@ exports.createRef = function (article_row, article_name, article_id) {
     return acc;
   }, {});
 };
-// belongs to  === article_id
-// createdby === username

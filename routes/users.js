@@ -1,4 +1,5 @@
 const usersRouter = require('express').Router();
+const { handle405 } = require('../errors/index');
 
 
 const {
@@ -7,12 +8,15 @@ const {
 
 usersRouter.route('/')
   .get(getAllUsers)
-  .post(addUser);
+  .post(addUser)
+  .all(handle405);
 
-usersRouter.get('/:username', getUser);
+usersRouter.route('/:username')
+  .get(getUser)
+  .all(handle405);
 
 usersRouter.route('/:username/articles')
-  .get(getArticlesByUsername);
-
+  .get(getArticlesByUsername)
+  .all(handle405);
 
 module.exports = usersRouter;
