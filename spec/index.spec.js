@@ -39,13 +39,12 @@ describe('./api', () => {
     }));
   it.only('[[POST]] - [status 405] - responds with error when invalid method used on endpoint', () => request
     .delete('/api')
-    .expect(405),
-  //   .then(({ body }) => {
-  //     expect(body.message).to.equal(
-  //       'Error Code: 405 : INVALID METHOD',
-  // );
-  // }
-  );
+    .expect(405)
+    .then(({ body }) => {
+      expect(body.message).to.equal(
+        'Error Code: 405 - Method Not Allowed',
+      );
+    }));
 
 
   describe('/topics', () => {
