@@ -28,14 +28,11 @@ exports.handle404 = (err, req, res, next) => {
   }
 };
 
-exports.handle405 = (err, req, res, next) => {
-  if (err.status === 405) {
-    res.sendStatus(405).send({ message: `Error Code: ${res.statusCode} - Method Not Allowed` });
-  } else {
-    next(err);
-  }
+exports.handle405 = (req, res) => {
+  res.status(405).send({ message: 'Error Code: 405 - Method Not Allowed' });
 };
 
 exports.handle500 = (err, req, res, next) => {
+  console.log(err);
   res.status(500).send({ message: `${res.statusCode} - internal server error` });
 };

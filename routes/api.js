@@ -1,5 +1,4 @@
 const apiRouter = require('express').Router();
-const allowMethods = require('allow-methods');
 const topicsRouter = require('./topics');
 const articlesRouter = require('./articles');
 const usersRouter = require('./users');
@@ -13,7 +12,6 @@ const getEndpoints = (req, res, next) => {
 apiRouter.route('/')
   .get(getEndpoints)
   .all(handle405);
-// .all(allowMethods(['get']), handle405)
 
 apiRouter.use('/topics', topicsRouter);
 apiRouter.use('/articles', articlesRouter);

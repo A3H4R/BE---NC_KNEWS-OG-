@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 
 
 app.use('/api', apiRouter);
-app.use('/*', (req, res) => {
+app.all('/*', (req, res) => {
   res.status(404).send({ message: `Error Code: ${res.statusCode} : Page Not Found` });
 });
 app.use(handle422);
