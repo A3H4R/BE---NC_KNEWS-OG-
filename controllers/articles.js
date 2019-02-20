@@ -1,24 +1,26 @@
 const {
-  fetchArticles, fetchArticlesById, changeVote, removeArticle,
-  fetchCommentsFromArticle, createComment, addVoteToComment, removeComment, totalArticles,
+  fetchArticles,
+  fetchArticlesById,
+  changeVote,
+  removeArticle,
+  fetchCommentsFromArticle,
+  createComment,
+  addVoteToComment,
+  removeComment,
+  totalArticles,
 } = require('../db/models/articles');
-
 
 exports.getArticles = (req, res, next) => {
   const {
     limit, sort_by, order, p,
   } = req.query;
 
-  Promise.all([
-    fetchArticles(limit, sort_by, order, p),
-    totalArticles(),
-  ])
+  Promise.all([fetchArticles(limit, sort_by, order, p), totalArticles()])
     .then(([articles, total_count]) => {
       res.status(200).send({ articles, total_count });
     })
     .catch(err => next(err));
 };
-
 
 exports.getArticlesById = (req, res, next) => {
   const {
@@ -26,7 +28,7 @@ exports.getArticlesById = (req, res, next) => {
   } = req.query;
   const { article_id } = req.params;
   fetchArticlesById(article_id, limit, sort_by, order, p)
-    .then((article) => {
+    .then(([article]) => {
       if (article.length === 0) {
         return Promise.reject({ status: 404, message: 'Article Not Found' });
       }
@@ -42,8 +44,17 @@ exports.updateVote = (req, res, next) => {
   changeVote(article_id, inc_vote)
     .then(([article]) => {
       if (typeof inc_vote !== 'number') {
-        return Promise.reject({ status: 400, message: 'value for vote must be a number' });
-      } if (!inc_vote) return Promise.reject({ status: 400, message: 'input for updating vote is missing' });
+        return Promise.reject({
+          status: 400,
+          message: 'value for vote must be a number',
+        });
+      }
+      if (!inc_vote) {
+        return Promise.reject({
+          status: 400,
+          message: 'input for updating vote is missing',
+        });
+      }
 
       res.status(200).send({ article });
     })
@@ -68,7 +79,12 @@ exports.getCommentsFromArticle = (req, res, next) => {
   const commentsFromArticle = () => {
     fetchCommentsFromArticle(article_id, limit, sort_by, order, p)
       .then((comments) => {
-        if (comments.length === 0) return Promise.reject({ status: 404, message: 'no comments found for this article' });
+        if (comments.length === 0) {
+          return Promise.reject({
+            status: 404,
+            message: 'no comments found for this article',
+          });
+        }
 
         res.status(200).send({ comments });
       })
@@ -92,7 +108,6 @@ exports.addComment = (req, res, next) => {
     .catch(next);
 };
 
-
 exports.updateCommentVote = (req, res, next) => {
   const { inc_vote = 0 } = req.body;
   const { article_id, comment_id } = req.params;
@@ -100,14 +115,22 @@ exports.updateCommentVote = (req, res, next) => {
   addVoteToComment(article_id, comment_id, inc_vote)
     .then(([comment]) => {
       if (typeof inc_vote !== 'number') {
-        return Promise.reject({ status: 400, message: 'value for vote must be a number' });
-      } if (!inc_vote) return Promise.reject({ status: 400, message: 'input for updating vote is missing' });
+        return Promise.reject({
+          status: 400,
+          message: 'value for vote must be a number',
+        });
+      }
+      if (!inc_vote) {
+        return Promise.reject({
+          status: 400,
+          message: 'input for updating vote is missing',
+        });
+      }
 
       return res.status(200).send({ comment });
     })
     .catch(err => next(err));
 };
-
 
 exports.deleteComment = (req, res, next) => {
   const { article_id, comment_id } = req.params;

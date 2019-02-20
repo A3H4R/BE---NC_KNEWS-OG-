@@ -33,28 +33,21 @@ describe('./api', () => {
     .get('/api/hellooooooo')
     .expect(404)
     .then(({ body }) => {
-      expect(body.message).to.equal(
-        'Error Code: 404 : Page Not Found',
-      );
+      expect(body.message).to.equal('Error Code: 404 : Page Not Found');
     }));
-  it.only('[[POST]] - [status 405] - responds with error when invalid method used on endpoint', () => request
+  it('[[POST]] - [status 405] - responds with error when invalid method used on endpoint', () => request
     .delete('/api')
     .expect(405)
     .then(({ body }) => {
-      expect(body.message).to.equal(
-        'Error Code: 405 - Method Not Allowed',
-      );
+      expect(body.message).to.equal('Error Code: 405 - Method Not Allowed');
     }));
-
 
   describe('/topics', () => {
     it('[[GET]] - [status 404] - responds with correct error when invalid route supplied to endpoint', () => request
       .get('/api/topics/break')
       .expect(404)
       .then(({ body }) => {
-        expect(body.message).to.equal(
-          'Error Code: 404 : Page Not Found',
-        );
+        expect(body.message).to.equal('Error Code: 404 : Page Not Found');
       }));
     it('[[GET]] - [status 200] - responds with array of topic objects', () => request
       .get('/api/topics')
@@ -64,7 +57,10 @@ describe('./api', () => {
         expect(body.topics[0]).to.contain.keys('slug', 'description');
       }));
     it('[[POST]] - [status 201] - body accepts an object with slug and description property & responds with the posted topic object', () => {
-      const newTopic = { description: 'Everything the light touches, is our kingdom', slug: 'The Lion King' };
+      const newTopic = {
+        description: 'Everything the light touches, is our kingdom',
+        slug: 'The Lion King',
+      };
       return request
         .post('/api/topics')
         .send(newTopic)
@@ -81,7 +77,9 @@ describe('./api', () => {
         .send(newTopic)
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).to.equal('Error Code: 400 - invalid input - violates not null violation');
+          expect(body.message).to.equal(
+            'Error Code: 400 - invalid input - violates not null violation',
+          );
         });
     });
     it('[[POST]] - [status 422] gives error when trying to post a topic that already exists', () => {
@@ -91,7 +89,9 @@ describe('./api', () => {
         .send(newTopic)
         .expect(422)
         .then(({ body }) => {
-          expect(body.message).to.equal('Error Code: 422 - duplicate key value violates unique constraint ----> Key (slug)=(mitch) already exists.');
+          expect(body.message).to.equal(
+            'Error Code: 422 - duplicate key value violates unique constraint ----> Key (slug)=(mitch) already exists.',
+          );
         });
     });
     describe('/topics/:topic/articles', () => {
@@ -107,7 +107,9 @@ describe('./api', () => {
         .get('/api/topics/france/articles')
         .expect(404)
         .then(({ body }) => {
-          expect(body.message).to.equal('Error Code: 404 - topic does not exist');
+          expect(body.message).to.equal(
+            'Error Code: 404 - topic does not exist',
+          );
         }));
       it('[[GET]] - [status 200] - defaults to giving back 10 article objects [-[DEFAULT CASE]-]', () => request
         .get('/api/topics/mitch/articles')
@@ -166,7 +168,12 @@ describe('./api', () => {
           expect(body.articles[9].article_id).to.equal(11);
         }));
       it('[[POST]] - [status 201] - body accepts an object with title, body, username properties & responds with the posted new article object', () => {
-        const newArticle = { title: 'What Do Cats Think About Us? ', body: 'We\'ve yet to discover anything about cat behavior that suggests they have a separate box they put us in when they\'re socializing with us.', username: 'butter_bridge' };
+        const newArticle = {
+          title: 'What Do Cats Think About Us? ',
+          body:
+            "We've yet to discover anything about cat behavior that suggests they have a separate box they put us in when they're socializing with us.",
+          username: 'butter_bridge',
+        };
         return request
           .post('/api/topics/cats/articles')
           .send(newArticle)
@@ -177,23 +184,34 @@ describe('./api', () => {
           });
       });
       it('[[POST]] - [status 400] -  responds with error when posting new article with username that does not exist', () => {
-        const newArticle = { title: 'What Do Cats Say About Us? ', body: 'cat\'s don\'t speak, so we do not know.', username: 'cat_man738' };
+        const newArticle = {
+          title: 'What Do Cats Say About Us? ',
+          body: "cat's don't speak, so we do not know.",
+          username: 'cat_man738',
+        };
         return request
           .post('/api/topics/cats/articles')
           .send(newArticle)
           .expect(400)
           .then(({ body }) => {
-            expect(body.message).to.equal('Error Code: 400 - username does not exist');
+            expect(body.message).to.equal(
+              'Error Code: 400 - username does not exist',
+            );
           });
       });
       it('[[POST]] - [status 400] gives error if body property is null (i.e - missing) when posting new article', () => {
-        const newArticle = { title: 'The Meaning of Life? ', username: 'butter_bridge' };
+        const newArticle = {
+          title: 'The Meaning of Life? ',
+          username: 'butter_bridge',
+        };
         return request
           .post('/api/topics/mitch/articles')
           .send(newArticle)
           .expect(400)
           .then(({ body }) => {
-            expect(body.message).to.equal('Error Code: 400 - invalid input - violates not null violation');
+            expect(body.message).to.equal(
+              'Error Code: 400 - invalid input - violates not null violation',
+            );
           });
       });
     });
@@ -204,7 +222,16 @@ describe('./api', () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).to.be.an('array');
-        expect(body.articles[0]).to.have.all.keys('title', 'topic', 'body', 'created_at', 'article_id', 'author', 'votes', 'comment_count');
+        expect(body.articles[0]).to.have.all.keys(
+          'title',
+          'topic',
+          'body',
+          'created_at',
+          'article_id',
+          'author',
+          'votes',
+          'comment_count',
+        );
       }));
     it('[[GET]] - [status 200] - defaults to giving back 10 article objects [-[DEFAULT CASE]-]', () => request
       .get('/api/articles')
@@ -230,7 +257,9 @@ describe('./api', () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.articles[0].title).to.equal('Z');
-        expect(body.articles[9].title).to.equal('Does Mitch predate civilisation?');
+        expect(body.articles[9].title).to.equal(
+          'Does Mitch predate civilisation?',
+        );
       }));
     it('[[GET]] - [status 200] - responds with the correct articles when page number not specified [DEFAULT CASE]', () => request
       .get('/api/articles')
@@ -272,20 +301,28 @@ describe('./api', () => {
           'Error Code: 400 - invalid input syntax for type integer',
         );
       }));
-    it('[[GET]] - [status 200] - responds with specified article object ', () => request
+    it.only('[[GET]] - [status 200] - responds with specified article object ', () => request
       .get('/api/articles/4')
       .expect(200)
       .then(({ body }) => {
-        expect(body.article[0]).to.contain.keys('title', 'topic', 'body', 'created_at', 'article_id', 'author', 'votes', 'comment_count');
-        expect(body.article[0].article_id).to.equal(4);
+        console.log(body.article)
+            || expect(body.article).to.contain.keys(
+              'title',
+              'topic',
+              'body',
+              'created_at',
+              'article_id',
+              'author',
+              'votes',
+              'comment_count',
+            );
+        expect(body.article.article_id).to.equal(4);
       }));
     it('[[GET]] - [status 404] - responds with error when article_id does not exist', () => request
       .get('/api/articles/900')
       .expect(404)
       .then(({ body }) => {
-        expect(body.message).to.equal(
-          'Error Code: 404 - Article Not Found',
-        );
+        expect(body.message).to.equal('Error Code: 404 - Article Not Found');
       }));
     it('[[PATCH]] - [status 200] - takes a body and increments the article votes by number specified ', () => {
       const newVote = { inc_vote: 25 };
@@ -305,7 +342,9 @@ describe('./api', () => {
         .send(newVote)
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).to.equal('Error Code: 400 - value for vote must be a number');
+          expect(body.message).to.equal(
+            'Error Code: 400 - value for vote must be a number',
+          );
         });
     });
     it('[[PATCH]] - [status 400] - gives an error when inc_vote is missing ', () => {
@@ -315,7 +354,9 @@ describe('./api', () => {
         .send(newVote)
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).to.equal('Error Code: 400 - input for updating vote is missing');
+          expect(body.message).to.equal(
+            'Error Code: 400 - input for updating vote is missing',
+          );
         });
     });
     it('[[DELETE]] - [status 204] - deletes the specified article', () => request
@@ -328,7 +369,9 @@ describe('./api', () => {
       .delete('/api/articles/coffee')
       .expect(400)
       .then(({ body }) => {
-        expect(body.message).to.equal('Error Code: 400 - invalid input syntax for type integer');
+        expect(body.message).to.equal(
+          'Error Code: 400 - invalid input syntax for type integer',
+        );
       }));
   });
   describe('/api/articles/:article_id/comments', () => {
@@ -337,20 +380,30 @@ describe('./api', () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.comments).to.be.an('array');
-        expect(body.comments[0]).to.have.all.keys('comment_id', 'votes', 'body', 'author', 'created_at');
+        expect(body.comments[0]).to.have.all.keys(
+          'comment_id',
+          'votes',
+          'body',
+          'author',
+          'created_at',
+        );
         expect(body.comments).to.have.lengthOf(2);
       }));
     it('[[GET]] - [status 404] - throws error when article has 0 comments', () => request
       .get('/api/articles/4/comments')
       .expect(404)
       .then(({ body }) => {
-        expect(body.message).to.equal('Error Code: 404 - no comments found for this article');
+        expect(body.message).to.equal(
+          'Error Code: 404 - no comments found for this article',
+        );
       }));
     it('[[GET]] - [status 400] - throws error when article_id is a string', () => request
       .get('/api/articles/animals/comments')
       .expect(400)
       .then(({ body }) => {
-        expect(body.message).to.equal('Error Code: 400 - invalid input syntax for type integer');
+        expect(body.message).to.equal(
+          'Error Code: 400 - invalid input syntax for type integer',
+        );
       }));
     it('[[GET]] - [status 200] - defaults to giving back 10 comment objects [-[DEFAULT CASE]-]', () => request
       .get('/api/articles/1/comments')
@@ -375,7 +428,9 @@ describe('./api', () => {
       .get('/api/articles/1/comments/?sort_by=body')
       .expect(200)
       .then(({ body }) => {
-        expect(body.comments[0].body).to.equal('This morning, I showered for nine minutes.');
+        expect(body.comments[0].body).to.equal(
+          'This morning, I showered for nine minutes.',
+        );
         expect(body.comments[9].body).to.equal('git push origin master');
       }));
     it('[[GET]] - [status 200] - responds with the correct articles when page number not specified [DEFAULT CASE]', () => request
@@ -413,7 +468,10 @@ describe('./api', () => {
         expect(body.comments[9].comment_id).to.equal(11);
       }));
     it('[[POST]] - [status 201] - body accepts an object with username and body properties & responds with the posted comment object', () => {
-      const newComment = { username: 'butter_bridge', body: 'This article is a great read' };
+      const newComment = {
+        username: 'butter_bridge',
+        body: 'This article is a great read',
+      };
       return request
         .post('/api/articles/8/comments')
         .send(newComment)
@@ -430,7 +488,9 @@ describe('./api', () => {
         .send(newComment)
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).to.equal('Error Code: 400 - invalid input - violates not null violation');
+          expect(body.message).to.equal(
+            'Error Code: 400 - invalid input - violates not null violation',
+          );
         });
     });
   });
@@ -453,7 +513,9 @@ describe('./api', () => {
         .send(newVote)
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).to.equal('Error Code: 400 - value for vote must be a number');
+          expect(body.message).to.equal(
+            'Error Code: 400 - value for vote must be a number',
+          );
         });
     });
     it('[[PATCH]] - [status 400] - gives an error when inc_vote is missing ', () => {
@@ -463,7 +525,9 @@ describe('./api', () => {
         .send(newVote)
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).to.equal('Error Code: 400 - input for updating vote is missing');
+          expect(body.message).to.equal(
+            'Error Code: 400 - input for updating vote is missing',
+          );
         });
     });
     it('[[DELETE]] - [status 204] - deletes the specified comment', () => request
@@ -476,7 +540,9 @@ describe('./api', () => {
       .delete('/api/articles/6/comments/Northcoders')
       .expect(400)
       .then(({ body }) => {
-        expect(body.message).to.equal('Error Code: 400 - invalid input syntax for type integer');
+        expect(body.message).to.equal(
+          'Error Code: 400 - invalid input syntax for type integer',
+        );
       }));
   });
 
@@ -486,10 +552,19 @@ describe('./api', () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.users).to.be.an('array');
-        expect(body.users[0]).to.contain.all.keys('username', 'avatar_url', 'name');
+        expect(body.users[0]).to.contain.all.keys(
+          'username',
+          'avatar_url',
+          'name',
+        );
       }));
     it('[[POST]] - [status 201] - body accepts an object with username, name and avatar+url properties & responds with creating a new user', () => {
-      const newUser = { username: 'Ronaldo007', avatar_url: 'https://img.allfootballapp.com/www/M00/0D/75/480x-/-/-/rB8ApFt31wmAGPTGAAAsYwIaGlw539.jpg', name: 'Cristiano' };
+      const newUser = {
+        username: 'Ronaldo007',
+        avatar_url:
+          'https://img.allfootballapp.com/www/M00/0D/75/480x-/-/-/rB8ApFt31wmAGPTGAAAsYwIaGlw539.jpg',
+        name: 'Cristiano',
+      };
       return request
         .post('/api/users')
         .send(newUser)
@@ -506,7 +581,9 @@ describe('./api', () => {
         .send(newUser)
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).to.equal('Error Code: 400 - invalid input - violates not null violation');
+          expect(body.message).to.equal(
+            'Error Code: 400 - invalid input - violates not null violation',
+          );
         });
     });
   });
@@ -522,7 +599,9 @@ describe('./api', () => {
       .get('/api/users/JoseMouriniho')
       .expect(404)
       .then(({ body }) => {
-        expect(body.message).to.equal('Error Code: 404 - username does not exist');
+        expect(body.message).to.equal(
+          'Error Code: 404 - username does not exist',
+        );
       }));
   });
   describe('/api/users/:username/articles', () => {
@@ -531,13 +610,23 @@ describe('./api', () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).to.be.an('array');
-        expect(body.articles[0]).to.have.all.keys('author', 'topic', 'article_id', 'votes', 'title', 'created_at', 'comment_count');
+        expect(body.articles[0]).to.have.all.keys(
+          'author',
+          'topic',
+          'article_id',
+          'votes',
+          'title',
+          'created_at',
+          'comment_count',
+        );
       }));
     it('[[GET]] - [status 404] - throws error when specified user does not exist', () => request
       .get('/api/users/spiderman491/articles')
       .expect(404)
       .then(({ body }) => {
-        expect(body.message).to.equal('Error Code: 404 - No articles for this user');
+        expect(body.message).to.equal(
+          'Error Code: 404 - No articles for this user',
+        );
       }));
     it('[[GET]] - [status 200] - defaults to giving back 10 article objects [-[DEFAULT CASE]-]', () => request
       .get('/api/users/icellusedkars/articles')
@@ -555,8 +644,12 @@ describe('./api', () => {
       .get('/api/users/icellusedkars/articles')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles[0].created_at).to.equal('2014-11-16T12:21:54.171Z');
-        expect(body.articles[5].created_at).to.equal('1978-11-25T12:21:54.171Z');
+        expect(body.articles[0].created_at).to.equal(
+          '2014-11-16T12:21:54.171Z',
+        );
+        expect(body.articles[5].created_at).to.equal(
+          '1978-11-25T12:21:54.171Z',
+        );
       }));
     it('[[GET]] - [status 200] - takes a sort_by query and responds with sorting article objects by specified column', () => request
       .get('/api/users/icellusedkars/articles/?sort_by=title')
