@@ -29,7 +29,7 @@ exports.getArticlesById = (req, res, next) => {
   const { article_id } = req.params;
   fetchArticlesById(article_id, limit, sort_by, order, p)
     .then(([article]) => {
-      if (article.length === 0) {
+      if (!article) {
         return Promise.reject({ status: 404, message: 'Article Not Found' });
       }
       res.status(200).send({ article });
