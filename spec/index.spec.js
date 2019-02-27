@@ -66,8 +66,9 @@ describe('./api', () => {
         .send(newTopic)
         .expect(201)
         .then(({ body }) => {
-          expect(body.newTopic[0].description).to.equal(newTopic.description);
-          expect(body.newTopic[0].slug).to.equal(newTopic.slug);
+          console.log(body)
+            || expect(body.newTopic.description).to.equal(newTopic.description);
+          expect(body.newTopic.slug).to.equal(newTopic.slug);
         });
     });
     it('[[POST]] - [status 400] gives error when description property is null (i.e - missing)', () => {
