@@ -39,4 +39,5 @@ exports.fetchArticlesByTopic = (
 
 exports.addArticle = newArticle => connection('articles')
   .insert(newArticle)
-  .returning('*');
+  .returning('*')
+  .then(newArticleArray => newArticleArray[0]);

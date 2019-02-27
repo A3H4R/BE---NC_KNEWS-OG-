@@ -66,8 +66,7 @@ describe('./api', () => {
         .send(newTopic)
         .expect(201)
         .then(({ body }) => {
-          console.log(body)
-            || expect(body.newTopic.description).to.equal(newTopic.description);
+          expect(body.newTopic.description).to.equal(newTopic.description);
           expect(body.newTopic.slug).to.equal(newTopic.slug);
         });
     });
@@ -180,8 +179,8 @@ describe('./api', () => {
           .send(newArticle)
           .expect(201)
           .then(({ body }) => {
-            expect(body.newArticle[0].title).to.equal(newArticle.title);
-            expect(body.newArticle[0].username).to.equal(newArticle.username);
+            expect(body.newArticle.title).to.equal(newArticle.title);
+            expect(body.newArticle.username).to.equal(newArticle.username);
           });
       });
       it('[[POST]] - [status 400] -  responds with error when posting new article with username that does not exist', () => {
