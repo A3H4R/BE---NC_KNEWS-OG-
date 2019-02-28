@@ -102,9 +102,11 @@ exports.getCommentsFromArticle = (req, res, next) => {
 exports.addComment = (req, res, next) => {
   const { username, body } = req.body;
   const { article_id } = req.params;
-
+  console.log(body);
   createComment({ username, body, article_id })
-    .then(([newComment]) => res.status(201).send({ newComment }))
+    .then(([newComment]) => {
+      if (body) res.status(201).send({ newComment });
+    })
     .catch(next);
 };
 

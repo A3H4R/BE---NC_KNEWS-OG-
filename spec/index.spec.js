@@ -153,17 +153,19 @@ describe('./api', () => {
           expect(body.articles[0].article_id).to.equal(6);
           expect(body.articles[1].article_id).to.equal(7);
         }));
-      it('[[GET]] - [status 200] - defaults with article objects ordered in descending order [-[DEFAULT CASE]-]', () => request
+      it.only('[[GET]] - [status 200] - defaults with article objects ordered in descending order [-[DEFAULT CASE]-]', () => request
         .get('/api/topics/mitch/articles?sort_by=article_id')
         .expect(200)
         .then(({ body }) => {
+          console.log(body.articles);
           expect(body.articles[0].article_id).to.equal(12);
           expect(body.articles[9].article_id).to.equal(2);
         }));
-      it('[[GET]] - [status 200] - takes order query responds with article objects ordered in ascending order', () => request
+      it.only('[[GET]] - [status 200] - takes order query responds with article objects ordered in ascending order', () => request
         .get('/api/topics/mitch/articles?sort_by=article_id&order=asc')
         .expect(200)
         .then(({ body }) => {
+          console.log(body.articles);
           expect(body.articles[0].article_id).to.equal(1);
           expect(body.articles[9].article_id).to.equal(11);
         }));
