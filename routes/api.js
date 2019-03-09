@@ -9,13 +9,13 @@ const getEndpoints = (req, res, next) => {
   res.status(200).send(allEndpointsObj);
 };
 
-apiRouter.route('/')
+apiRouter
+  .route('/')
   .get(getEndpoints)
   .all(handle405);
 
 apiRouter.use('/topics', topicsRouter);
 apiRouter.use('/articles', articlesRouter);
 apiRouter.use('/users', usersRouter);
-
 
 module.exports = apiRouter;

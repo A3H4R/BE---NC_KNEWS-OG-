@@ -18,6 +18,7 @@ describe('./api', () => {
     .expect(200)
     .then(({ body }) => {
       expect(body.allEndpointsObj).to.have.all.keys(
+        '/api',
         '/api/topics',
         '/api/topics/:topic/articles',
         '/api/articles',
@@ -153,7 +154,7 @@ describe('./api', () => {
           expect(body.articles[0].article_id).to.equal(6);
           expect(body.articles[1].article_id).to.equal(7);
         }));
-      it.only('[[GET]] - [status 200] - defaults with article objects ordered in descending order [-[DEFAULT CASE]-]', () => request
+      it('[[GET]] - [status 200] - defaults with article objects ordered in descending order [-[DEFAULT CASE]-]', () => request
         .get('/api/topics/mitch/articles?sort_by=article_id')
         .expect(200)
         .then(({ body }) => {
@@ -161,7 +162,7 @@ describe('./api', () => {
           expect(body.articles[0].article_id).to.equal(12);
           expect(body.articles[9].article_id).to.equal(2);
         }));
-      it.only('[[GET]] - [status 200] - takes order query responds with article objects ordered in ascending order', () => request
+      it('[[GET]] - [status 200] - takes order query responds with article objects ordered in ascending order', () => request
         .get('/api/topics/mitch/articles?sort_by=article_id&order=asc')
         .expect(200)
         .then(({ body }) => {
