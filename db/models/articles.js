@@ -23,11 +23,11 @@ exports.fetchArticles = (
   .leftJoin('comments', 'comments.article_id', '=', 'articles.article_id')
   .groupBy('articles.article_id')
   .count('comments.comment_id as comment_count')
-// .orderBy([
-//   { column: sort_by },
-//   { column: 'articles.article_id', order: 'desc' },
-// ])
-  .orderBy(sort_by, order)
+  .orderBy([
+    { column: sort_by, order },
+    { column: 'articles.article_id', order: 'desc' },
+  ])
+// .orderBy(sort_by, order)
   .limit(limit)
   .offset((p - 1) * limit);
 

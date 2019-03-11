@@ -158,7 +158,6 @@ describe('./api', () => {
         .get('/api/topics/mitch/articles?sort_by=article_id')
         .expect(200)
         .then(({ body }) => {
-          console.log(body.articles);
           expect(body.articles[0].article_id).to.equal(12);
           expect(body.articles[9].article_id).to.equal(2);
         }));
@@ -166,7 +165,6 @@ describe('./api', () => {
         .get('/api/topics/mitch/articles?sort_by=article_id&order=asc')
         .expect(200)
         .then(({ body }) => {
-          console.log(body.articles);
           expect(body.articles[0].article_id).to.equal(1);
           expect(body.articles[9].article_id).to.equal(11);
         }));
@@ -351,7 +349,7 @@ describe('./api', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.message).to.equal(
-            'Error Code: 400 - value for vote must be a number',
+            'Error Code: 400 - invalid input syntax for type integer',
           );
         });
     });
@@ -522,7 +520,7 @@ describe('./api', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.message).to.equal(
-            'Error Code: 400 - value for vote must be a number',
+            'Error Code: 400 - invalid input syntax for type integer',
           );
         });
     });
