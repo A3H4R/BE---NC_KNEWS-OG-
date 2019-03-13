@@ -34,13 +34,13 @@ describe('./api', () => {
     .get('/api/hellooooooo')
     .expect(404)
     .then(({ body }) => {
-      expect(body.message).to.equal('Error Code: 404 : Page Not Found');
+      expect(body.message).to.equal('Page Not Found');
     }));
   it('[[POST]] - [status 405] - responds with error when invalid method used on endpoint', () => request
     .delete('/api')
     .expect(405)
     .then(({ body }) => {
-      expect(body.message).to.equal('Error Code: 405 - Method Not Allowed');
+      expect(body.message).to.equal('Method Not Allowed');
     }));
 
   describe('/topics', () => {
@@ -48,7 +48,7 @@ describe('./api', () => {
       .get('/api/topics/break')
       .expect(404)
       .then(({ body }) => {
-        expect(body.message).to.equal('Error Code: 404 : Page Not Found');
+        expect(body.message).to.equal('Page Not Found');
       }));
     it('[[GET]] - [status 200] - responds with array of topic objects', () => request
       .get('/api/topics')
@@ -78,9 +78,7 @@ describe('./api', () => {
         .send(newTopic)
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).to.equal(
-            'Error Code: 400 - invalid input - violates not null violation',
-          );
+          expect(body.message).to.equal('A required field is empty');
         });
     });
     it('[[POST]] - [status 422] gives error when trying to post a topic that already exists', () => {
@@ -90,9 +88,7 @@ describe('./api', () => {
         .send(newTopic)
         .expect(422)
         .then(({ body }) => {
-          expect(body.message).to.equal(
-            'Error Code: 422 - duplicate key value violates unique constraint ----> Key (slug)=(mitch) already exists.',
-          );
+          expect(body.message).to.equal('Topic already exists');
         });
     });
     describe('/topics/:topic/articles', () => {
@@ -108,9 +104,7 @@ describe('./api', () => {
         .get('/api/topics/france/articles')
         .expect(404)
         .then(({ body }) => {
-          expect(body.message).to.equal(
-            'Error Code: 404 - topic does not exist',
-          );
+          expect(body.message).to.equal('topic does not exist');
         }));
       it('[[GET]] - [status 200] - defaults to giving back 10 article objects [-[DEFAULT CASE]-]', () => request
         .get('/api/topics/mitch/articles')
@@ -195,9 +189,7 @@ describe('./api', () => {
           .send(newArticle)
           .expect(400)
           .then(({ body }) => {
-            expect(body.message).to.equal(
-              'Error Code: 400 - username does not exist',
-            );
+            expect(body.message).to.equal('Username does not exist');
           });
       });
       it('[[POST]] - [status 400] gives error if body property is null (i.e - missing) when posting new article', () => {
@@ -210,9 +202,7 @@ describe('./api', () => {
           .send(newArticle)
           .expect(400)
           .then(({ body }) => {
-            expect(body.message).to.equal(
-              'Error Code: 400 - invalid input - violates not null violation',
-            );
+            expect(body.message).to.equal('A required field is empty');
           });
       });
     });
@@ -298,9 +288,7 @@ describe('./api', () => {
       .get('/api/articles/bread22')
       .expect(400)
       .then(({ body }) => {
-        expect(body.message).to.equal(
-          'Error Code: 400 - invalid input syntax for type integer',
-        );
+        expect(body.message).to.equal('Input must be a number');
       }));
     it('[[GET]] - [status 200] - responds with specified article object ', () => request
       .get('/api/articles/4')
@@ -322,13 +310,13 @@ describe('./api', () => {
       .get('/api/articles/900')
       .expect(404)
       .then(({ body }) => {
-        expect(body.message).to.equal('Error Code: 404 - Article Not Found');
+        expect(body.message).to.equal('Article Not Found');
       }));
     it('[[GET]] - [status 404] - responds with error when article_id is out of range', () => request
       .get('/api/articles/1111111111111111111111111111111')
       .expect(404)
       .then(({ body }) => {
-        expect(body.message).to.equal('Error Code: 404 - Article Not Found');
+        expect(body.message).to.equal('Article Not Found');
       }));
     it('[[PATCH]] - [status 200] - takes a body and increments the article votes by number specified ', () => {
       const newVote = { inc_vote: 25 };
@@ -348,9 +336,7 @@ describe('./api', () => {
         .send(newVote)
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).to.equal(
-            'Error Code: 400 - invalid input syntax for type integer',
-          );
+          expect(body.message).to.equal('Input must be a number');
         });
     });
     it('[[PATCH]] - [status 400] - gives an error when inc_vote is missing ', () => {
@@ -360,9 +346,7 @@ describe('./api', () => {
         .send(newVote)
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).to.equal(
-            'Error Code: 400 - input for updating vote is missing',
-          );
+          expect(body.message).to.equal('Input for updating vote is missing');
         });
     });
     it('[[DELETE]] - [status 204] - deletes the specified article', () => request
@@ -375,9 +359,7 @@ describe('./api', () => {
       .delete('/api/articles/coffee')
       .expect(400)
       .then(({ body }) => {
-        expect(body.message).to.equal(
-          'Error Code: 400 - invalid input syntax for type integer',
-        );
+        expect(body.message).to.equal('Input must be a number');
       }));
   });
   describe('/api/articles/:article_id/comments', () => {
@@ -399,17 +381,13 @@ describe('./api', () => {
       .get('/api/articles/4/comments')
       .expect(404)
       .then(({ body }) => {
-        expect(body.message).to.equal(
-          'Error Code: 404 - no comments found for this article',
-        );
+        expect(body.message).to.equal('no comments found for this article');
       }));
     it('[[GET]] - [status 400] - throws error when article_id is a string', () => request
       .get('/api/articles/animals/comments')
       .expect(400)
       .then(({ body }) => {
-        expect(body.message).to.equal(
-          'Error Code: 400 - invalid input syntax for type integer',
-        );
+        expect(body.message).to.equal('Input must be a number');
       }));
     it('[[GET]] - [status 200] - defaults to giving back 10 comment objects [-[DEFAULT CASE]-]', () => request
       .get('/api/articles/1/comments')
@@ -494,9 +472,7 @@ describe('./api', () => {
         .send(newComment)
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).to.equal(
-            'Error Code: 400 - invalid input - violates not null violation',
-          );
+          expect(body.message).to.equal('A required field is empty');
         });
     });
   });
@@ -519,9 +495,7 @@ describe('./api', () => {
         .send(newVote)
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).to.equal(
-            'Error Code: 400 - invalid input syntax for type integer',
-          );
+          expect(body.message).to.equal('Input must be a number');
         });
     });
     it('[[PATCH]] - [status 400] - gives an error when inc_vote is missing ', () => {
@@ -531,9 +505,7 @@ describe('./api', () => {
         .send(newVote)
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).to.equal(
-            'Error Code: 400 - input for updating vote is missing',
-          );
+          expect(body.message).to.equal('Input for updating vote is missing');
         });
     });
     it('[[DELETE]] - [status 204] - deletes the specified comment', () => request
@@ -546,9 +518,7 @@ describe('./api', () => {
       .delete('/api/articles/6/comments/Northcoders')
       .expect(400)
       .then(({ body }) => {
-        expect(body.message).to.equal(
-          'Error Code: 400 - invalid input syntax for type integer',
-        );
+        expect(body.message).to.equal('Input must be a number');
       }));
   });
 
@@ -587,9 +557,7 @@ describe('./api', () => {
         .send(newUser)
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).to.equal(
-            'Error Code: 400 - invalid input - violates not null violation',
-          );
+          expect(body.message).to.equal('A required field is empty');
         });
     });
   });
@@ -605,9 +573,7 @@ describe('./api', () => {
       .get('/api/users/JoseMouriniho')
       .expect(404)
       .then(({ body }) => {
-        expect(body.message).to.equal(
-          'Error Code: 404 - username does not exist',
-        );
+        expect(body.message).to.equal('Username does not exist');
       }));
   });
   describe('/api/users/:username/articles', () => {
@@ -630,9 +596,7 @@ describe('./api', () => {
       .get('/api/users/spiderman491/articles')
       .expect(404)
       .then(({ body }) => {
-        expect(body.message).to.equal(
-          'Error Code: 404 - No articles for this user',
-        );
+        expect(body.message).to.equal('No articles for this user');
       }));
     it('[[GET]] - [status 200] - defaults to giving back 10 article objects [-[DEFAULT CASE]-]', () => request
       .get('/api/users/icellusedkars/articles')

@@ -1,28 +1,22 @@
 exports.handle422 = (err, req, res, next) => {
   const codes = {
-    23505: `duplicate key value violates unique constraint ----> ${err.detail}`,
+    23505: 'Topic already exists',
   };
   if (codes[err.code]) {
-    res
-      .status(422)
-      .send({ message: `Error Code: ${res.statusCode} - ${codes[err.code]}` });
+    res.status(422).send({ message: `${codes[err.code]}` });
   } else next(err);
 };
 
 exports.handle400 = (err, req, res, next) => {
   const codes = {
-    23502: 'invalid input - violates not null violation',
-    23503: 'username does not exist',
-    '22P02': 'invalid input syntax for type integer',
+    23502: 'A required field is empty',
+    23503: 'Username does not exist',
+    '22P02': 'Input must be a number',
   };
   if (codes[err.code]) {
-    res
-      .status(400)
-      .send({ message: `Error Code: ${res.statusCode} - ${codes[err.code]}` });
+    res.status(400).send({ message: `${codes[err.code]}` });
   } else if (err.status === 400) {
-    res
-      .status(400)
-      .send({ message: `Error Code: ${res.statusCode} - ${err.message}` });
+    res.status(400).send({ message: `${err.message}` });
   } else next(err);
 };
 
@@ -31,25 +25,19 @@ exports.handle404 = (err, req, res, next) => {
     22003: 'Article Not Found',
   };
   if (codes[err.code]) {
-    res
-      .status(404)
-      .send({ message: `Error Code: ${res.statusCode} - ${codes[err.code]}` });
+    res.status(404).send({ message: `${codes[err.code]}` });
   } else if (err.status === 404) {
-    res
-      .status(404)
-      .send({ message: `Error Code: ${res.statusCode} - ${err.message}` });
+    res.status(404).send({ message: `${err.message}` });
   } else {
     next(err);
   }
 };
 
 exports.handle405 = (req, res) => {
-  res.status(405).send({ message: 'Error Code: 405 - Method Not Allowed' });
+  res.status(405).send({ message: 'Method Not Allowed' });
 };
 
 exports.handle500 = (err, req, res, next) => {
   console.log(err);
-  res
-    .status(500)
-    .send({ message: `${res.statusCode} - internal server error` });
+  res.status(500).send({ message: 'Internal server error' });
 };

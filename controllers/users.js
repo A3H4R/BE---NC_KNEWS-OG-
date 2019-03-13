@@ -1,8 +1,10 @@
-
 const {
-  fetchAllUsers, createUser, fetchArticlesByUsername, fetchUser, totalArticlesByUsername,
+  fetchAllUsers,
+  createUser,
+  fetchArticlesByUsername,
+  fetchUser,
+  totalArticlesByUsername,
 } = require('../db/models/users');
-
 
 exports.getAllUsers = (req, res, next) => {
   fetchAllUsers()
@@ -23,12 +25,15 @@ exports.getUser = (req, res, next) => {
   fetchUser(username)
     .then(([user]) => {
       if (!user) {
-        return Promise.reject({ status: 404, message: 'username does not exist' });
-      } res.status(200).send({ user });
+        return Promise.reject({
+          status: 404,
+          message: 'Username does not exist',
+        });
+      }
+      res.status(200).send({ user });
     })
     .catch(next);
 };
-
 
 exports.getArticlesByUsername = (req, res, next) => {
   const {
@@ -43,7 +48,10 @@ exports.getArticlesByUsername = (req, res, next) => {
   ])
     .then(([articles, total_count]) => {
       if (articles.length === 0) {
-        return Promise.reject({ status: 404, message: 'No articles for this user' });
+        return Promise.reject({
+          status: 404,
+          message: 'No articles for this user',
+        });
       }
       res.status(200).send({ articles, total_count });
     })

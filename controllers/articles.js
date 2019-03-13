@@ -46,13 +46,13 @@ exports.updateVote = (req, res, next) => {
       if (typeof inc_vote !== 'number') {
         return Promise.reject({
           status: 400,
-          message: 'value for vote must be a number',
+          message: 'Value for vote must be a number',
         });
       }
       if (!inc_vote) {
         return Promise.reject({
           status: 400,
-          message: 'input for updating vote is missing',
+          message: 'Input for updating vote is missing',
         });
       }
 
@@ -125,7 +125,7 @@ exports.updateCommentVote = (req, res, next) => {
       if (!inc_vote) {
         return Promise.reject({
           status: 400,
-          message: 'input for updating vote is missing',
+          message: 'Input for updating vote is missing',
         });
       }
 
