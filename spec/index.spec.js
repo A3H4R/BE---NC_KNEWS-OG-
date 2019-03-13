@@ -61,6 +61,7 @@ describe('./api', () => {
       const newTopic = {
         description: 'Everything the light touches, is our kingdom',
         slug: 'The Lion King',
+        image: 'https://i.imgur.com/b9app99.png',
       };
       return request
         .post('/api/topics')
@@ -82,7 +83,11 @@ describe('./api', () => {
         });
     });
     it('[[POST]] - [status 422] gives error when trying to post a topic that already exists', () => {
-      const newTopic = { description: 'My Coding Journey', slug: 'mitch' };
+      const newTopic = {
+        description: 'My Coding Journey',
+        slug: 'mitch',
+        image: 'https://i.imgur.com/b9app99.png',
+      };
       return request
         .post('/api/topics')
         .send(newTopic)
