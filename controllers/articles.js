@@ -32,7 +32,7 @@ exports.getArticlesById = (req, res, next) => {
       if (!article) {
         return Promise.reject({ status: 404, message: 'Article Not Found' });
       }
-      res.status(200).send({ article });
+      return res.status(200).send({ article });
     })
     .catch(err => next(err));
 };
@@ -56,7 +56,7 @@ exports.updateVote = (req, res, next) => {
         });
       }
 
-      res.status(200).send({ article });
+      return res.status(200).send({ article });
     })
     .catch(err => next(err));
 };
@@ -69,9 +69,7 @@ exports.deleteArticleById = (req, res, next) => {
 };
 
 exports.getCommentsFromArticle = (req, res, next) => {
-  const {
-    limit, sort_by, sort_ascending, p,
-  } = req.query;
+  const { limit, sort_by, p } = req.query;
   const { article_id } = req.params;
 
   let order;
@@ -86,7 +84,7 @@ exports.getCommentsFromArticle = (req, res, next) => {
           });
         }
 
-        res.status(200).send({ comments });
+        return res.status(200).send({ comments });
       })
       .catch(err => next(err));
   };
@@ -102,7 +100,6 @@ exports.getCommentsFromArticle = (req, res, next) => {
 exports.addComment = (req, res, next) => {
   const { username, body } = req.body;
   const { article_id } = req.params;
-  console.log(body);
   createComment({ username, body, article_id })
     .then(([newComment]) => {
       if (body) res.status(201).send({ newComment });

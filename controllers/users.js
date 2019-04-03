@@ -30,7 +30,7 @@ exports.getUser = (req, res, next) => {
           message: 'Username does not exist',
         });
       }
-      res.status(200).send({ user });
+      return res.status(200).send({ user });
     })
     .catch(next);
 };
@@ -53,7 +53,7 @@ exports.getArticlesByUsername = (req, res, next) => {
           message: 'No articles for this user',
         });
       }
-      res.status(200).send({ articles, total_count });
+      return res.status(200).send({ articles, total_count });
     })
     .catch(err => next(err));
 };
