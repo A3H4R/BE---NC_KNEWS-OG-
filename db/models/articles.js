@@ -27,7 +27,6 @@ exports.fetchArticles = (
     { column: sort_by, order },
     { column: 'articles.article_id', order: 'desc' },
   ])
-// .orderBy(sort_by, order)
   .limit(limit)
   .offset((p - 1) * limit);
 
